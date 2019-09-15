@@ -32,8 +32,11 @@ makef fstart
 - Stop all containers `make down`
 - Build images `make build`
 
-## Authors / Maintainers
+## Contributions
+- Pull last version of `develop` branch
+- Create new branch that name begins with `ft-` followed by functionnality's name. Example for login : `ft-login`
 
+## Authors / Maintainers
 - Ameena AZIZ <ameena.aziz9@gmail.com>
 - Kaba CONDE <contact@kabaconde.com>
 - Adam Malick SOW <adam.sow97@gmail.com>
