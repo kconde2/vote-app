@@ -11,4 +11,6 @@ logs:
 	docker-compose logs -f
 
 fresh:
-	docker-compose exec app fresh
+	docker-compose exec go fresh
+
+go: up fresh

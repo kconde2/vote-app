@@ -8,12 +8,20 @@ services:
       POSTGRES_PASSWORD: s3cr3tp4ssw0rd
     ports:
       - 5432:5432
-  app:
-    build: .
+  go:
+    build: api/
     command: ["fresh", "main.go"]
     volumes:
-      - .:/go/src/app
+      - ./api:/go/src/app
     ports:
       - "80:8080"
     depends_on:
       - db
+  react:
+    image: node:lts-alpine
+    working_dir: /home/vote-app
+    volumes:
+      - ./front:/home/vote-app
+    ports:
+      - "3000:3000"
+    command: ["yarn", "start"]
