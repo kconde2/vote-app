@@ -7,10 +7,10 @@ FROM golang:latest
 LABEL maintainer="Rajeev Singh <rajeevhub@gmail.com>"
 
 # Set the Current Working Directory inside the container
-WORKDIR /go/src/app
+WORKDIR /go/src/vote-app/
 
 # Create binary directory, install glide and fresh
-RUN mkdir -p $$GOPATH/bin && \
+RUN mkdir -p $GOPATH/bin && \
     curl https://glide.sh/get | sh && \
     go get github.com/pilu/fresh
 
@@ -22,7 +22,7 @@ RUN go mod download
 
 # Copy the source from the current directory to the Working Directory inside the container
 COPY . .
-
+RUN pwd && ls -la
 # Build the Go app
 RUN go build -o main .
 
