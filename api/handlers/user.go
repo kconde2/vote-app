@@ -5,10 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kconde2/vote-app/db"
-
-	"vote-app/db"
-	"vote-app/models"
+	"github.com/kconde2/vote-app/api/db"
+	"github.com/kconde2/vote-app/api/models"
 )
 
 var DB db.Persist

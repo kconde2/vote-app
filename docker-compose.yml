@@ -19,8 +19,8 @@ services:
       - db
   react:
     image: node:lts-alpine
-    working_dir: /home/vote-app
+    working_dir: /home/front
     volumes:
-      - ./front:/home/vote-app
+      - ./front:/home/front
     ports:
       - "3000:3000"

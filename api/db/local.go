@@ -1,28 +1,32 @@
 package db
 
-import "vote-app/handlers"
+import "github.com/kconde2/vote-app/api/models"
 
+// Local ss
 type Local struct{}
 
 var (
-	listUser          []User
-	incrementUser     int
-	listProposal      []Proposal
-	incrementProposal int
+	listUser      []User
+	incrementUser int
 )
 
+// Connect c
 func (l Local) Connect() (Persist, error) {
 	return nil, nil
 }
 
-type User = model.User
+// User u
+type User = models.User
 
+// SaveUser S
 func (l Local) SaveUser(u User) error {
 	incrementUser++
 	u.Id = incrementUser
 	listUser = append(listUser, u)
 	return nil
 }
+
+// GetUser g
 func (l Local) GetUser() ([]User, error) {
 	return listUser, nil
 }

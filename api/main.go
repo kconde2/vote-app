@@ -4,9 +4,8 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kconde2/vote-app/handlers"
 
-	"vote-app/handlers"
+	"github.com/vote-app/api/handlers"
 )
 
 var (
