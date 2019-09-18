@@ -2,6 +2,7 @@ version: '3'
 services:
   db:
     image: postgres
+    container_name: db
     environment:
       POSTGRES_DB: dev-dev
       POSTGRES_USER: postgres-dev
@@ -9,10 +10,11 @@ services:
     ports:
       - 5432:5432
   go:
-    build: api/
+    build: .
     command: ["fresh", "main.go"]
     volumes:
-      - ./api:/go/src/vote-app
+      - ./.:/go/src/github.com/kconde2/vote-app
+      - ${PWD}/app-front # ignore copying app-front into golang image
     ports:
       - "80:8080"
     depends_on:
@@ -21,6 +23,6 @@ services:
     image: node:lts-alpine
     working_dir: /home/front
     volumes:
-      - ./front:/home/front
+      - ./app-front:/home/front
     ports:
       - "3000:3000"
