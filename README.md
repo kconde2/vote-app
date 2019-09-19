@@ -3,7 +3,7 @@
 Vote App is a (GO+ReactJS) app that allows users to vote online on draft laws.
 
 ## Requirements
-
+- GO 1.13 on your local machine
 - docker latest (`docker --version`) (https://docs.docker.com/install/)
 - docker-compose latest (`docker-compose --version`) (https://docs.docker.com/compose/install/)
 - make (make --version)

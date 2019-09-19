@@ -22,4 +22,4 @@ finstall:
 	docker-compose exec react yarn install
 
 fclean:
-	rm -rf front/node_modules front/yarn.lock
+	rm -rf app/node_modules app/yarn.lock

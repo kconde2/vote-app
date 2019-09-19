@@ -10,19 +10,19 @@ services:
     ports:
       - 5432:5432
   go:
-    build: .
+    build: ./api
     command: ["fresh", "main.go"]
     volumes:
-      - ./.:/go/src/github.com/kconde2/vote-app
-      - ${PWD}/app-front # ignore copying app-front into golang image
+      - ./api:/go/src/github.com/kconde2/vote-app/api
     ports:
       - "80:8080"
     depends_on:
       - db
   react:
     image: node:lts-alpine
-    working_dir: /home/front
+    working_dir: /home/node/app
     volumes:
-      - ./app-front:/home/front
+      - ./app:/home/node/app
     ports:
       - "3000:3000"
+    command: 'yarn start'
