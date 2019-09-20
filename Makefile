@@ -13,13 +13,24 @@ logs:
 fresh:
 	docker-compose exec go fresh
 
-run: up fresh
+clean:
+	rm -rf api/tmp
+
+run: clean up fresh
 
 fstart:
 	docker-compose run react yarn start
+
+set-up:
+	cd api/ && go get ./... && go mod download
 
 finstall:
 	docker-compose exec react yarn install
 
 fclean:
 	rm -rf app/node_modules app/yarn.lock
+
+install: set-up build
+
+enter:
+	docker-compose exec go bash
