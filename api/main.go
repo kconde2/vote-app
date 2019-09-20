@@ -4,25 +4,25 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/kconde2/vote-app/api/handlers"
+	"github.com/kconde2/vote-app/api/controllers"
+	"github.com/kconde2/vote-app/api/db"
 )
-
-var (
-	port string
-)
-
-func init() {
-	// port = os.Getenv("PORT")
-	port = "8080"
-	if len(port) == 0 {
-		log.Panic("no given port")
-	}
-}
 
 func main() {
+	log.Println("Starting server...")
+
+	db.Initialize()
+
 	r := gin.Default()
-	r.GET("/users", handlers.GetUser)
-	r.POST("/users", handlers.CreateUser)
+
+	v1 := r.Group("/")
+	{
+		users := v1.Group("/users")
+		{
+			users.GET("/", controllers.GetUsers)
+			users.POST("/", controllers.CreateUser)
+		}
+	}
+
 	r.Run(":8080")
 }

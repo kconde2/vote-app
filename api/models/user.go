@@ -3,30 +3,44 @@ package models
 import (
 	"encoding/json"
 	"errors"
+	"time"
+
+	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 )
 
 // User represents the user.
 type User struct {
-	ID        int    `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Password  string `json:"pass"`
+	gorm.Model
+	ID          int       `gorm:"primary_key"`
+	UUID        uuid.UUID `json:"uuid"`
+	AccessLevel int
+	FirstName   string    `json:"first_name"`
+	LastName    string    `json:"last_name"`
+	Email       string    `json:"email"`
+	Password    string    `json:"pass"`
+	DateOfBirth time.Time `json:"birth_date"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   *time.Time
 }
 
 // Valid v
-func (u User) Valid() []error {
+func (user User) Valid() []error {
 	var errs []error
-	if len(u.Password) == 0 {
-		errs = append(errs, errors.New("no given password"))
+	if len(user.Password) == 0 {
+		errs = append(errs, errors.New("No given password"))
 	}
+
 	if len(errs) != 0 {
 		return errs
 	}
+
 	return nil
 }
 
 // MarshalJSON is marshaling the user.
-func (u User) MarshalJSON() ([]byte, error) {
+func (user User) MarshalJSON() ([]byte, error) {
 	type UserResponse struct {
 		ID        int    `json:"id"`
 		FirstName string `json:"first_name"`
@@ -34,8 +48,23 @@ func (u User) MarshalJSON() ([]byte, error) {
 	}
 
 	var ur UserResponse
-	ur.ID = u.ID
-	ur.FirstName = u.FirstName
-	ur.LastName = u.LastName
+	ur.ID = user.ID
+	ur.FirstName = user.FirstName
+	ur.LastName = user.LastName
 	return json.Marshal(ur)
 }
+
+// BeforeCreate B
+func (user *User) BeforeCreate(scope *gorm.Scope) error {
+	scope.SetColumn("CreatedAt", time.Now())
+	scope.SetColumn("UUID", uuid.UUID.String)
+	return nil
+}
+
+// BeforeUpdate B
+func (user *User) BeforeUpdate(scope *gorm.Scope) error {
+	scope.SetColumn("UpdatedAt", time.Now())
+	return nil
+}
+
+// TODO: For check for soft delete
