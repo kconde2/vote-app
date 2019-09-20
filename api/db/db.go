@@ -69,9 +69,20 @@ func Initialize() {
 		}
 	}
 
-	// Run migrations (models field changes)
+	// Blacklist Table
+	if !db.HasTable(&models.Blacklist{}) {
+		err := db.CreateTable(&models.Blacklist{})
+		if err != nil {
+			log.Println("votes ==> Table already exists")
+		} else {
+			log.Println("users ==> Successfully created")
+		}
+	}
+
+	// Run migrations (models and field changes)
 	db.AutoMigrate(&models.User{})
 	db.AutoMigrate(&models.Vote{})
+	db.AutoMigrate(&models.Blacklist{})
 }
 
 // GetDB gDB
