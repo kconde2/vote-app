@@ -25,11 +25,11 @@ func getEnv(key, fallback string) string {
 
 // Initialize creates a connection to postgres database and migrates any new models
 func Initialize() {
-	user := getEnv("POSTGRES_USER", "postgres-dev")
-	password := getEnv("POSTGRES_PASSWORD", "s3cr3tp4ssw0rd")
+	user := getEnv("POSTGRES_USER", "userp")
+	password := getEnv("POSTGRES_PASSWORD", "password")
 	host := getEnv("POSTGRES_HOST", "localhost")
 	port := getEnv("POSTGRES_PORT", "5432")
-	database := getEnv("POSTGRES_DB", "dev-dev")
+	database := getEnv("POSTGRES_DB", "dev")
 
 	dbinfo := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable",
 		user,
