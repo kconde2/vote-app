@@ -1,13 +1,17 @@
-version: "3"
+version: "3.7"
+
+x-enviroment: &commonEnviroment
+  POSTGRES_HOST: "db"
+  POSTGRES_DB: "dev-dev"
+  POSTGRES_USER: "postgres-dev"
+  POSTGRES_PASSWORD: "s3cr3tp4ssw0rd"
+  POSTGRES_PORT: "5432"
+
 services:
   db:
     image: postgres
     container_name: db
-    environment:
-      POSTGRES_DB: dev-dev
-      POSTGRES_USER: postgres-dev
-      POSTGRES_PASSWORD: s3cr3tp4ssw0rd
-      POSTGRES_PORT: 5432
+    environment: *commonEnviroment
     ports:
       - 5432:5432
   go:
@@ -19,6 +23,7 @@ services:
       - "80:8080"
     depends_on:
       - db
+    environment: *commonEnviroment
   react:
     image: node:lts-alpine
     working_dir: /home/node/app
