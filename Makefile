@@ -22,7 +22,7 @@ fstart:
 	docker-compose run react yarn start
 
 set-up:
-	cd api/ && go get ./... && go mod download
+	go get -u ./...
 
 finstall:
 	docker-compose exec react yarn install

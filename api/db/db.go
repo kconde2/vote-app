@@ -49,14 +49,29 @@ func Initialize() {
 
 	log.Println("Database connected")
 
+	// User Table
 	if !db.HasTable(&models.User{}) {
 		err := db.CreateTable(&models.User{})
 		if err != nil {
-			log.Println("Table already exists")
+			log.Println("users ==> Table already exists")
+		} else {
+			log.Println("users ==> Successfully created")
 		}
 	}
 
+	// Vote Table
+	if !db.HasTable(&models.Vote{}) {
+		err := db.CreateTable(&models.Vote{})
+		if err != nil {
+			log.Println("votes ==> Table already exists")
+		} else {
+			log.Println("users ==> Successfully created")
+		}
+	}
+
+	// Run migrations (models field changes)
 	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.Vote{})
 }
 
 // GetDB gDB
@@ -64,6 +79,7 @@ func GetDB() *gorm.DB {
 	return db
 }
 
+// CloseDB cDB
 func CloseDB() {
 	db.Close()
 }

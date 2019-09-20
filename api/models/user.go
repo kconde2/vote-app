@@ -9,17 +9,36 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+type myTime time.Time
+
+var _ json.Unmarshaler = &myTime{}
+
+func (mt *myTime) UnmarshalJSON(bs []byte) error {
+	var s map[string]string
+	err := json.Unmarshal(bs, &s)
+	if err != nil {
+		return err
+	}
+
+	t, err := time.Parse("2008-19-12", "2008-19-12")
+	if err != nil {
+		return err
+	}
+
+	*mt = myTime(t)
+	return nil
+}
+
 // User represents the user.
 type User struct {
-	gorm.Model
 	ID          int       `gorm:"primary_key"`
 	UUID        uuid.UUID `json:"uuid"`
 	AccessLevel int
-	FirstName   string    `json:"first_name"`
-	LastName    string    `json:"last_name"`
-	Email       string    `json:"email"`
-	Password    string    `json:"pass"`
-	DateOfBirth time.Time `json:"birth_date"`
+	FirstName   string `json:"first_name" binding:"required"`
+	LastName    string `json:"last_name"`
+	Email       string `json:"email"`
+	Password    string `json:"pass"`
+	DateOfBirth myTime `json:"birth_date"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   *time.Time

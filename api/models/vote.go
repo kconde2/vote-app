@@ -4,22 +4,21 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Vote represents the vote.
 type Vote struct {
-	gorm.Model
-	ID          int        `json:"id"`
-	UUID        string     `json:"uuid"`
+	ID          int        `gorm:"primary_key"`
+	UUID        uuid.UUID  `json:"uuid"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
-	UUIDVote    []*string  `json:"uuid_vote"`
+	UUIDVote    []User     `json:"uuid_vote" gorm:"many2many:votes_users;association_foreignkey:UUID;foreignkey:uuid"`
 	StartDate   time.Time  `json:"start_date"`
 	EndDate     time.Time  `json:"end_date"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   time.Time  `json:"updated_at"`
-	DeleteAt    *time.Time `json:"delete_at"`
+	DeletedAt   *time.Time `json:"deleted_at"`
 }
 
 // Valid v
@@ -35,9 +34,9 @@ func (u Vote) Valid() []error {
 // MarshalJSON is marshaling the Vote.
 func (u Vote) MarshalJSON() ([]byte, error) {
 	type VoteResponse struct {
-		UUID        string `json:"uuid"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
+		UUID        uuid.UUID `json:"uuid"`
+		Title       string    `json:"title"`
+		Description string    `json:"description"`
 	}
 
 	var vr VoteResponse
