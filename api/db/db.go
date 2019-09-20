@@ -16,6 +16,7 @@ import (
 var db *gorm.DB
 var err error
 
+// getEnv tries to retrieve environment variable or return specified fallback one
 func getEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
@@ -85,12 +86,12 @@ func Initialize() {
 	db.AutoMigrate(&models.Blacklist{})
 }
 
-// GetDB gDB
+// GetDB get gorm db instance
 func GetDB() *gorm.DB {
 	return db
 }
 
-// CloseDB cDB
+// CloseDB close gorm db instance
 func CloseDB() {
 	db.Close()
 }

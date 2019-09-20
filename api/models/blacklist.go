@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// Blacklist b.
+// Blacklist represents blacklist's IP that aren't allowed to login
 type Blacklist struct {
 	ID        int    `gorm:"primary_key"`
 	IPAddress string `json:"ip_address" binding:"required"`

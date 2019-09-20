@@ -21,7 +21,7 @@ type Vote struct {
 	DeletedAt   *time.Time `json:"deleted_at"`
 }
 
-// Valid v
+// Valid check that user struct is valid
 func (u Vote) Valid() []error {
 	var errs []error
 

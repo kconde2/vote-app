@@ -48,7 +48,7 @@ func UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, &user)
 }
 
-// DeleteUser d
+// DeleteUser delete specific user
 func DeleteUser(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User

@@ -44,7 +44,7 @@ type User struct {
 	DeletedAt   *time.Time
 }
 
-// Valid v
+// Valid check that user struct is valid
 func (user User) Valid() []error {
 	var errs []error
 	if len(user.Password) == 0 {
@@ -73,17 +73,15 @@ func (user User) MarshalJSON() ([]byte, error) {
 	return json.Marshal(ur)
 }
 
-// BeforeCreate B
+// BeforeCreate is gorm hook that is triggered before saving new user
 func (user *User) BeforeCreate(scope *gorm.Scope) error {
 	scope.SetColumn("CreatedAt", time.Now())
 	scope.SetColumn("UUID", uuid.UUID.String)
 	return nil
 }
 
-// BeforeUpdate B
+// BeforeUpdate is gorm hook that is triggered on every updated on user struct
 func (user *User) BeforeUpdate(scope *gorm.Scope) error {
 	scope.SetColumn("UpdatedAt", time.Now())
 	return nil
 }
-
-// TODO: For check for soft delete

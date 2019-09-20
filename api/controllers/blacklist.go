@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AddToBlacklist add
+// AddToBlacklist add ip address to blacklist
 func AddToBlacklist(c *gin.Context) {
 	var blacklist models.Blacklist
 	var db = db.GetDB()
@@ -24,7 +24,7 @@ func AddToBlacklist(c *gin.Context) {
 	c.JSON(http.StatusOK, &blacklist)
 }
 
-// RemoveFromBlacklist remove
+// RemoveFromBlacklist remove ip address from blacklist
 func RemoveFromBlacklist(c *gin.Context) {
 	id := c.Param("id")
 	var blacklist models.Blacklist

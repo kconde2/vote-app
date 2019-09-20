@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetVotes g
+// GetVotes get all votes
 func GetVotes(c *gin.Context) {
 
 	var votes []models.Vote
@@ -18,7 +18,7 @@ func GetVotes(c *gin.Context) {
 	c.JSON(200, votes)
 }
 
-// CreateVote c
+// CreateVote create new vote subject
 func CreateVote(c *gin.Context) {
 	var vote models.Vote
 	var db = db.GetDB()
@@ -33,7 +33,7 @@ func CreateVote(c *gin.Context) {
 	c.JSON(http.StatusOK, &vote)
 }
 
-// UpdateVote u
+// UpdateVote update specific vote
 func UpdateVote(c *gin.Context) {
 	id := c.Param("id")
 	var vote models.Vote
@@ -48,7 +48,7 @@ func UpdateVote(c *gin.Context) {
 	c.JSON(http.StatusOK, &vote)
 }
 
-// DeleteVote d
+// DeleteVote delete specific vote
 func DeleteVote(c *gin.Context) {
 	id := c.Param("id")
 	var vote models.Vote
