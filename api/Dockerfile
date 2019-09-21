@@ -6,13 +6,13 @@ FROM golang:latest
 # Add Maintainer Info
 LABEL maintainer="Rajeev Singh <rajeevhub@gmail.com>"
 
-# Set the Current Working Directory inside the container
-WORKDIR /go/src/app
-
 # Create binary directory, install glide and fresh
-RUN mkdir -p $$GOPATH/bin && \
+RUN mkdir -p $GOPATH/bin && \
     curl https://glide.sh/get | sh && \
     go get github.com/pilu/fresh
+
+# Set the Current Working Directory inside the container
+WORKDIR /go/src/github.com/kconde2/vote-app/api
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./
@@ -21,10 +21,10 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy the source from the current directory to the Working Directory inside the container
-COPY . .
+COPY . ./
 
 # Build the Go app
-RUN go build -o main .
+RUN go build -o main ./
 
 # Expose port 8080 to the outside world
 EXPOSE 8080

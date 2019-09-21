@@ -1,52 +1,38 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
-	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/kconde2/vote-app/api/controllers"
+	"github.com/kconde2/vote-app/api/db"
 )
 
 func main() {
-	now := time.Now()
-	u := User{
-		FirstName:   "Henri",
-		LastName:    "Lepic",
-		DateOfBirth: now,
-	}
+	log.Println("Starting server...")
 
-	fmt.Println(u)
-
-	payload, err := json.Marshal(u)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(payload))
+	db.Initialize()
 
 	r := gin.Default()
-	r.GET("/users", func(c *gin.Context) {
-		c.JSON(200, u)
-	})
 
-	r.POST("/users", func(c *gin.Context) {
-		var u User
-		c.BindJSON(&u)
+	v1 := r.Group("/")
+	{
+		users := v1.Group("/users")
+		{
+			users.GET("/", controllers.GetUsers)
+			users.POST("/", controllers.CreateUser)
+			users.PUT("/:uuid", controllers.UpdateUser)
+			users.DELETE("/:uuid", controllers.DeleteUser)
+		}
 
-		log.Println(u)
-		c.JSON(200, nil)
-	})
+		votes := v1.Group("/votes")
+		{
+			votes.GET("/", controllers.GetVotes)
+			votes.POST("/", controllers.CreateVote)
+			votes.PUT("/:uuid", controllers.UpdateVote)
+			votes.DELETE("/:uuid", controllers.DeleteVote)
+		}
+	}
+
 	r.Run(":8080")
-}
-
-// User represents user attributes
-type User struct {
-	FirstName   string    `json:"first_name"`
-	LastName    string    `json:"last_name"`
-	DateOfBirth time.Time `json:"birth_date"`
-}
-
-func (u User) String() string {
-	return u.FirstName + " " + u.LastName
 }
