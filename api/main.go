@@ -20,7 +20,8 @@ func main() {
 		users := v1.Group("/users")
 		{
 			users.GET("/", controllers.GetUsers)
-			users.POST("/", controllers.CreateUser)
+			users.POST("/register", controllers.CreateUser)
+			// users.POST("/login", controllers.CreateUser)
 			users.PUT("/:uuid", controllers.UpdateUser)
 			users.DELETE("/:uuid", controllers.DeleteUser)
 		}

@@ -46,7 +46,7 @@ makef fstart
 
 ## Usage
 
-- GO API : [http://localhost:8080](http://localhost:8080)
+- GO API : [http://localhost:4000](http://localhost:4000)
 - Vote App : [http://localhost:3000](http://localhost:3000)
 
 ## Useful commands
