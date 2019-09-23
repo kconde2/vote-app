@@ -54,6 +54,12 @@ makef fstart
 - Stop all containers `make down`
 - Build images `make build`
 
+## Bugs fix
+If your "go" container wont build, check build errors  with
+```
+docker-compose up
+```
+
 ## Contributions
 
 - Pull last version of `develop` branch
