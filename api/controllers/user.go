@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"net/http"
+	"log"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/kconde2/vote-app/api/db"
 	"github.com/kconde2/vote-app/api/models"
@@ -20,6 +22,7 @@ func GetUsers(c *gin.Context) {
 
 // CreateUser c
 func CreateUser(c *gin.Context) {
+
 	var user models.User
 	var db = db.GetDB()
 
@@ -29,7 +32,28 @@ func CreateUser(c *gin.Context) {
 		})
 		return
 	}
-	db.Create(&user)
+	
+	// Validate request fields
+	if err := user.Valid(); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	// Hash password before storing into database
+	pwd := user.Password
+
+	if hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost); err != nil{
+		log.Println(err)
+		return
+	} else{
+		user.Password = string(hash)
+	}
+
+	err := db.Create(&user)
+	if err != nil {
+		log.Println("DB is nil", db)
+		return
+	}
 	c.JSON(http.StatusOK, &user)
 }
 

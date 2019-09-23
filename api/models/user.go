@@ -3,55 +3,50 @@ package models
 import (
 	"encoding/json"
 	"errors"
+	
 	"time"
+	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/jinzhu/gorm"
 	uuid "github.com/satori/go.uuid"
 )
 
-type myTime time.Time
-
-var _ json.Unmarshaler = &myTime{}
-
-func (mt *myTime) UnmarshalJSON(bs []byte) error {
-	var s map[string]string
-	err := json.Unmarshal(bs, &s)
-	if err != nil {
-		return err
-	}
-
-	t, err := time.Parse("2008-19-12", "2008-19-12")
-	if err != nil {
-		return err
-	}
-
-	*mt = myTime(t)
-	return nil
-}
-
 // User represents the user.
 type User struct {
 	ID          int       `gorm:"primary_key"`
 	UUID        uuid.UUID `json:"uuid"`
-	AccessLevel int
-	FirstName   string `json:"first_name" binding:"required"`
-	LastName    string `json:"last_name"`
-	Email       string `json:"email"`
-	Password    string `json:"pass"`
-	DateOfBirth myTime `json:"birth_date"`
+	AccessLevel int		`json:"access_level" Usage:"oneof=0 1"`
+	FirstName   string `json:"first_name" validate:"required,min=2,excludesall=0x20" Usage:"alpha"`
+	LastName    string `json:"last_name" validate:"required,min=2,excludesall=0x20" Usage:"alpha"`
+	Email       string `json:"email" validate:"required,email" Usage:"unique"`
+	Password    string `json:"pass" validate:"required" Usage:"eqfield=confirm_password"`
+	// DateOfBirth time.Time `json:"birth_date" validate:"required,adult"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   *time.Time
 }
 
-// Valid check that user struct is valid
+// Valid checks that user struct is valid
 func (user User) Valid() []error {
+	
 	var errs []error
-	if len(user.Password) == 0 {
-		errs = append(errs, errors.New("No given password"))
+
+	v := validator.New()
+	// _ = v.RegisterValidation("adult", func(fl validator.FieldLevel) bool {
+	// 	now := time.Now()
+	// 	if v,err := time.Parse("2019-10-19",fl.Field().String()); err == nil {
+	// 		diff := now.Sub(v).Seconds()
+	// 			return diff >= 18
+	// 	}
+	// 	return false
+	// })
+	if user.AccessLevel < 0 || user.AccessLevel > 1 {
+		errs = append(errs, errors.New("This field's value can only be 0 or 1"))
 	}
 
-	if len(errs) != 0 {
+	err := v.Struct(user)
+	if err != nil {
+		errs = append(errs, err)
 		return errs
 	}
 
@@ -62,8 +57,12 @@ func (user User) Valid() []error {
 func (user User) MarshalJSON() ([]byte, error) {
 	type UserResponse struct {
 		ID        int    `json:"id"`
+		AccessLevel int  `json:"access_level"`
 		FirstName string `json:"first_name"`
 		LastName  string `json:"last_name"`
+		Email  string `json:"email"`
+		Password  string `json:"pass"`
+		DateOfBirth time.Time `json:"birth_date"`
 	}
 
 	var ur UserResponse
