@@ -16,8 +16,8 @@ func main() {
 
 	r := gin.Default()
 
+	// Generates JWT token
 	authware, err := middleware.AuthMiddleware()
-
 	if err != nil {
 	  log.Fatal("JWT Error:" + err.Error())
 	}
@@ -27,7 +27,7 @@ func main() {
 		users := v1.Group("/users")
 		{
 			users.GET("/", controllers.GetUsers)
-			users.POST("/register", controllers.CreateUser)
+			users.POST("/", controllers.CreateUser)
 			users.PUT("/:uuid", controllers.UpdateUser)
 			users.DELETE("/:uuid", controllers.DeleteUser)
 		}
