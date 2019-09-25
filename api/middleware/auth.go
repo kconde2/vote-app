@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/appleboy/gin-jwt/v2"
 	"time"
-	"log"
+	// "log"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 
@@ -17,7 +17,7 @@ type login struct {
 	Password string `form:"password" json:"password" binding:"required"`
 }
 
-var identityKey = "uuid"
+var identityKey = "email"
 
 // AuthMiddleware : The authmiddlare handling jwt token security
 func AuthMiddleware()  (*jwt.GinJWTMiddleware, error){
@@ -38,9 +38,7 @@ func AuthMiddleware()  (*jwt.GinJWTMiddleware, error){
 	})
 }
 
-// Callback function that should perform the authorization of the authenticated user. Called
-// only after an authentication success. Must return true on success, false on failure.
-// Optional, default to success.
+// Callback function that should perform the authorization of the authenticated user. 
 func authorizator (data interface{}, c *gin.Context) bool {
 	if v, ok := data.(*models.User); ok && v.Email == "admin" {
 		return true
@@ -50,8 +48,6 @@ func authorizator (data interface{}, c *gin.Context) bool {
 }
 
 // Callback function that should perform the authentication of the user based on login info.
-// Must return user data as user identifier, it will be stored in Claim Array. Required.
-// Check error (e) to determine the appropriate error message.
 func authenticator (c *gin.Context) (interface{}, error) {
 		var loginVals login
 		var user models.User
@@ -63,24 +59,17 @@ func authenticator (c *gin.Context) (interface{}, error) {
 		// request fields
 		email := loginVals.Email
 		password := loginVals.Password
-		hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
 		db.Where("email = ?", email).First(&user)
 		
-		log.Println("err", err)
-		log.Println(user.Password)
-		log.Println(hashPassword)
-
 		// Compare the stored hashed password, with the hashed version of the password that was received
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 			// If the two passwords don't match, return a 401 status
 			return nil,jwt.ErrFailedAuthentication
-			// return 
-		} else {
+		} 
 			return &models.User{
 				Email:  email,
 				UUID:  user.UUID,
 			}, nil
-		}
 }
 
 func identityHandler (c *gin.Context) interface{} {
@@ -90,22 +79,19 @@ func identityHandler (c *gin.Context) interface{} {
 	}
 }
 
-// Callback function that will be called during login.
-// Using this function it is possible to add additional payload data to the webtoken.
-// The data is then made available during requests via c.Get("JWT_PAYLOAD").
-// Note that the payload is not encrypted.
-// The attributes mentioned on jwt.io can't be used as keys for the map.
-// Optional, by default no additional data will be set.
+// Callback function that will be called during login to define jwt's payload
 func payloadFunc (data interface{}) jwt.MapClaims {
 			if v, ok := data.(*models.User); ok {
 				return jwt.MapClaims{
 					identityKey: v.Email,
+					"uuid": v.UUID,
+					"accessLevel": v.AccessLevel,
 				}
 			}
 			return jwt.MapClaims{}
 }
 
-// User can define own LoginResponse func.
+// Defines what is retuned when you call the LoginHandler method
 func LoginResponse (c *gin.Context, code int, token string, expire time.Time) {
 	c.JSON(http.StatusOK, gin.H{
 			"jwt":  token,
