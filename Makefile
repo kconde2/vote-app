@@ -10,13 +10,16 @@ build:
 logs:
 	docker-compose logs -f
 
+go-logs:
+	docker-compose logs -f go
+
 fresh:
 	docker-compose exec go fresh
 
 clean:
 	rm -rf api/tmp
 
-run: clean up fresh
+run: go-logs
 
 fstart:
 	docker-compose run react yarn start

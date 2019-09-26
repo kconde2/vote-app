@@ -9,6 +9,7 @@ go 1.13
 
 require (
 	github.com/appleboy/gin-jwt/v2 v2.6.2
+	github.com/bearbin/go-age v0.0.0-20140407072555-316d0c1e7cd1
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-playground/locales v0.12.1 // indirect
@@ -25,3 +26,5 @@ require (
 	golang.org/x/sys v0.0.0-20190919044723-0c1ff786ef13 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
 )
+
+replace github.com/satori/go.uuid v1.2.0 => github.com/satori/go.uuid v1.2.1-0.20181028125025-b2ce2384e17b
