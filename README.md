@@ -54,6 +54,9 @@ makef fstart
 - Stop all containers `make down`
 - Build images `make build`
 
+## Usefull links
+- Validations : https://github.com/qor/validations
+
 ## Bugs fix
 If your "go" container wont build, check build errors  with
 ```

@@ -17,13 +17,13 @@ func main() {
 	r := gin.Default()
 
 	// Generates JWT token
-	authware, err := middleware.AuthMiddleware()
+	authMiddleware, err := middleware.AuthMiddleware()
 	if err != nil {
-	  log.Fatal("JWT Error:" + err.Error())
+		log.Fatal("JWT Error:" + err.Error())
 	}
 	v1 := r.Group("/")
 	{
-		v1.POST("/login", authware.LoginHandler)
+		v1.POST("/login", authMiddleware.LoginHandler)
 		users := v1.Group("/users")
 		{
 			users.GET("/", controllers.GetUsers)

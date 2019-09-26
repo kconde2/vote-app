@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"log"
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/kconde2/vote-app/api/db"
 	"github.com/kconde2/vote-app/api/models"
@@ -22,38 +20,33 @@ func GetUsers(c *gin.Context) {
 
 // CreateUser c
 func CreateUser(c *gin.Context) {
-
 	var user models.User
 	var db = db.GetDB()
-
 	if err := c.BindJSON(&user); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-	
-	// Validate request fields
-	if err := user.Valid(); err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, err)
-		return
-	}
-	// Hash password before storing into database
-	pwd := user.Password
 
-	if hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost); err != nil{
-		log.Println(err)
+	// Create user if no errors throws by Validate method in user model
+	if err := db.Create(&user); err.Error != nil {
+
+		// convert array of errors to JSON
+		errs := err.GetErrors()
+		strErrors := make([]string, len(errs))
+		for i, err := range errs {
+			strErrors[i] = err.Error()
+		}
+
+		// return errors
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"errors": strErrors,
+		})
+
 		return
-	} else{
-		user.Password = string(hash)
 	}
 
-	err := db.Create(&user)
-	if err != nil {
-		log.Println("DB is nil", db)
-		return
-	}
 	c.JSON(http.StatusOK, &user)
 }
 
