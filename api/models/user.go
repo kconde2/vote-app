@@ -21,8 +21,8 @@ type User struct {
 	ID          int       `gorm:"primary_key"`
 	UUID        uuid.UUID `json:"uuid"`
 	AccessLevel int       `json:"access_level" valid:"range(0,1)"`
-	FirstName   string    `json:"first_name" valid:"required,length(2|255)"`
-	LastName    string    `json:"last_name" valid:"required,length(2|255)"`
+	FirstName   string    `json:"first_name" valid:"required,alpha,length(2|255)"`
+	LastName    string    `json:"last_name" valid:"required,alpha,length(2|255)"`
 	Email       string    `json:"email" valid:"email,required"`
 	Password    string    `json:"pass" valid:"required"`
 	DateOfBirth time.Time `json:"birth_date" valid:"required"`
