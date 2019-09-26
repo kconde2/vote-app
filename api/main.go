@@ -40,6 +40,8 @@ func main() {
 			votes.DELETE("/:uuid", controllers.DeleteVote)
 		}
 	}
+	test := authware.GetClaimsFromJWT
+	log.Println("claim here",test)
 
 	r.Run(":8080")
 }
