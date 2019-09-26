@@ -67,7 +67,6 @@ func authenticator(c *gin.Context) (interface{}, error) {
 		log.Println(err)
 		// If the two passwords don't match, return a 401 status
 		return nil, jwt.ErrFailedAuthentication
-		// return
 	}
 
 	return &models.User{
@@ -86,10 +85,6 @@ func LoginResponse(c *gin.Context, code int, token string, expire time.Time) {
 
 // Callback function that will be called during login.
 // Using this function it is possible to add additional payload data to the webtoken.
-// The data is then made available during requests via c.Get("JWT_PAYLOAD").
-// Note that the payload is not encrypted.
-// The attributes mentioned on jwt.io can't be used as keys for the map.
-// Optional, by default no additional data will be set.
 func payloadFunc(data interface{}) jwt.MapClaims {
 	log.Println("payloadFunc")
 	if v, ok := data.(*models.User); ok {
@@ -114,10 +109,6 @@ func identityHandler(c *gin.Context) interface{} {
 // only after an authentication success. Must return true on success, false on failure.
 // Optional, default to success.
 func authorizator(data interface{}, c *gin.Context) bool {
-
-	log.Println("=============================================>")
-	log.Println(c)
-	log.Println("=============================================>")
 	if _, ok := data.(*models.User); ok {
 		return true
 	}
