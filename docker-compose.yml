@@ -22,7 +22,7 @@ services:
     volumes:
       - ./api:/go/src/github.com/kconde2/vote-app/api
     ports:
-      - "8080:8080"
+      - "4000:8080"
     depends_on:
       - db
     environment: *commonEnviroment

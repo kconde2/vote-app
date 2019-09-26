@@ -22,14 +22,31 @@ func GetUsers(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	var user models.User
 	var db = db.GetDB()
-
 	if err := c.BindJSON(&user); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-	db.Create(&user)
+
+	// Create user if no errors throws by Validate method in user model
+	if err := db.Create(&user); err.Error != nil {
+
+		// convert array of errors to JSON
+		errs := err.GetErrors()
+		strErrors := make([]string, len(errs))
+		for i, err := range errs {
+			strErrors[i] = err.Error()
+		}
+
+		// return errors
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"errors": strErrors,
+		})
+
+		return
+	}
+
 	c.JSON(http.StatusOK, &user)
 }
 

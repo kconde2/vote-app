@@ -46,13 +46,22 @@ makef fstart
 
 ## Usage
 
-- GO API : [http://localhost:8080](http://localhost:8080)
+- GO API : [http://localhost:4000](http://localhost:4000)
 - Vote App : [http://localhost:3000](http://localhost:3000)
 
 ## Useful commands
 
 - Stop all containers `make down`
 - Build images `make build`
+
+## Usefull links
+- Validations : https://github.com/qor/validations
+
+## Bugs fix
+If your "go" container wont build, check build errors  with
+```
+docker-compose up
+```
 
 ## Contributions
 
