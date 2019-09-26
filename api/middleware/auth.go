@@ -101,6 +101,7 @@ func payloadFunc(data interface{}) jwt.MapClaims {
 	return jwt.MapClaims{}
 }
 
+// Set the identity handler function
 func identityHandler(c *gin.Context) interface{} {
 	claims := jwt.ExtractClaims(c)
 
@@ -113,7 +114,11 @@ func identityHandler(c *gin.Context) interface{} {
 // only after an authentication success. Must return true on success, false on failure.
 // Optional, default to success.
 func authorizator(data interface{}, c *gin.Context) bool {
-	if v, ok := data.(*models.User); ok && v.Email == "admin" {
+
+	log.Println("=============================================>")
+	log.Println(c)
+	log.Println("=============================================>")
+	if _, ok := data.(*models.User); ok {
 		return true
 	}
 

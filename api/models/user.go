@@ -42,7 +42,6 @@ type UserResponse struct {
 
 // Validate checks that user struct is valid
 func (user User) Validate(db *gorm.DB) {
-
 	// check if user is adult
 	if age := utils.Age(user.DateOfBirth); age < 18 {
 		db.AddError(errors.New("user: age need to be 18+"))
