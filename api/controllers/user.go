@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/kconde2/vote-app/api/db"
@@ -21,11 +20,8 @@ func GetUsers(c *gin.Context) {
 
 // CreateUser c
 func CreateUser(c *gin.Context) {
-
 	var user models.User
-	var userExists models.User
 	var db = db.GetDB()
-
 	if err := c.BindJSON(&user); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -33,31 +29,24 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	// Validate request fields
-	if err := user.Valid(); err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, err)
-		return
-	}
+	// Create user if no errors throws by Validate method in user model
+	if err := db.Create(&user); err.Error != nil {
 
-	// check if user already exists
-	if err := db.Where("email = ?", user.Email).First(&userExists).Error; err == nil {
-		if userExists.Email != "" {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"code":    http.StatusUnprocessableEntity,
-				"message": "User already exists",
-			})
-			return
+		// convert array of errors to JSON
+		errs := err.GetErrors()
+		strErrors := make([]string, len(errs))
+		for i, err := range errs {
+			strErrors[i] = err.Error()
 		}
-	}
 
-	// check error
-	err := db.Create(&user)
-	if err.Error != nil {
-		log.Println("DB is nil", db)
-		c.JSON(http.StatusInternalServerError, err)
+		// return errors
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"errors": strErrors,
+		})
+
 		return
 	}
+
 	c.JSON(http.StatusOK, &user)
 }
 

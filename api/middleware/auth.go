@@ -8,7 +8,6 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/kconde2/vote-app/api/db"
@@ -26,7 +25,7 @@ var identityKey = "uuid"
 func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Realm:           "test zone",
-		Key:             []byte("secret key"),
+		Key:             []byte("$2a$10$GCiJQcAqSaPV8.bU/mvGiOgdHV8GuMOdmW6.nUpCRisfUx9b.VGqy"),
 		Timeout:         time.Hour,
 		MaxRefresh:      time.Hour,
 		IdentityKey:     identityKey,
@@ -57,16 +56,15 @@ func authenticator(c *gin.Context) (interface{}, error) {
 	email := loginVals.Email
 	password := loginVals.Password
 
-	if err := db.Where("email = ?", email).First(&user); err != nil {
-		if err.Error == gorm.ErrRecordNotFound {
-			return nil, errors.New("User not found")
-		}
-	}
+	err := db.Where("email = ?", email).First(&user)
 
-	// TODO: After three (3) unsuccessful login attempts the user is blocked on the basis of his IP
+	if err.RecordNotFound() {
+		return nil, errors.New("User not found")
+	}
 
 	// Compare the stored hashed password, with the hashed version of the password that was received
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		log.Println(err)
 		// If the two passwords don't match, return a 401 status
 		return nil, jwt.ErrFailedAuthentication
 		// return

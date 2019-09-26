@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"strconv"
 	"strings"
@@ -11,20 +12,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/jinzhu/gorm"
+	"github.com/kconde2/vote-app/api/utils"
 	uuid "github.com/satori/go.uuid"
-	//"github.com/kconde2/vote-app/api/utils"
 )
 
 // User represents the user.
 type User struct {
 	ID          int       `gorm:"primary_key"`
 	UUID        uuid.UUID `json:"uuid"`
-	AccessLevel int       `json:"access_level" Usage:"oneof=0 1"`
-	FirstName   string    `json:"first_name" validate:"required,min=2,excludesall=0x20" Usage:"alpha"`
-	LastName    string    `json:"last_name" validate:"required,min=2,excludesall=0x20" Usage:"alpha"`
-	Email       string    `json:"email" validate:"required,email" Usage:"unique"`
-	Password    string    `json:"pass" validate:"required" Usage:"eqfield=confirm_password"`
-	DateOfBirth time.Time `json:"birth_date" validate:"required"`
+	AccessLevel int       `json:"access_level" valid:"range(0,1)"`
+	FirstName   string    `json:"first_name" valid:"required,length(2|255)"`
+	LastName    string    `json:"last_name" valid:"required,length(2|255)"`
+	Email       string    `json:"email" valid:"email,required"`
+	Password    string    `json:"pass" valid:"required"`
+	DateOfBirth time.Time `json:"birth_date" valid:"required"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   *time.Time
@@ -39,44 +40,27 @@ type UserResponse struct {
 	DateOfBirth string    `json:"birth_date"`
 }
 
-// Valid checks that user struct is valid
-func (user User) Valid() []error {
+// Validate checks that user struct is valid
+func (user User) Validate(db *gorm.DB) {
 
-	/*var errs []error
-
-	value := validator.New()*/
-	// _ = value.RegisterValidation("adult", func(fl validator.FieldLevel) bool {
-	// 	now := time.Now()
-	// 	if value,err := time.Parse("2019-10-19",fl.Field().String()); err == nil {
-	// 		diff := now.Sub(value).Seconds()
-	// 			return diff >= 18
-	// 	}
-	// 	return false
-	// })
-	/**if user.AccessLevel < 0 || user.AccessLevel > 1 {
-		errs = append(errs, errors.New("This field's value can only be 0 or 1"))
+	// check if user is adult
+	if age := utils.Age(user.DateOfBirth); age < 18 {
+		db.AddError(errors.New("user: age need to be 18+"))
 	}
 
-	err := value.Struct(user)
-	if err != nil {
-		errs = append(errs, err)
-		return errs
-	}*/
-
-	if age.FromDate(user.DateOfBirth) {
-
+	// check if user already exists
+	var u User
+	if !db.Where("email = ?", user.Email).First(&u).RecordNotFound() {
+		db.AddError(errors.New("user: already exists"))
 	}
-
-	return nil
 }
 
-// SetPassword s
+// SetPassword create a hashed password for user
 func (user *User) SetPassword(password string) {
-	pwd := user.Password
-	if hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost); err != nil {
+	if hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost); err != nil {
 		log.Println(err)
 	} else {
-		user.Password = string(hash)
+		user.Password = string(hashedPassword)
 	}
 }
 
@@ -118,7 +102,7 @@ func (user User) MarshalJSON() ([]byte, error) {
 	return json.Marshal(ur)
 }
 
-// UnmarshalJSON iu
+// UnmarshalJSON create user formatted representation of jsonData
 func (user *User) UnmarshalJSON(data []byte) error {
 	var jsonData map[string]string
 	err := json.Unmarshal(data, &jsonData)
@@ -139,7 +123,7 @@ func (user *User) UnmarshalJSON(data []byte) error {
 			user.Email = value
 		}
 
-		if strings.ToLower(key) == "password" {
+		if strings.ToLower(key) == "pass" {
 			user.SetPassword(value)
 		}
 

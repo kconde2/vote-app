@@ -10,7 +10,10 @@ import (
 	// Postgres to database connection
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/kconde2/vote-app/api/models"
-	_ "github.com/lib/pq"
+
+	// This is import for database
+	//_ "github.com/lib/pq"
+	"github.com/qor/validations"
 )
 
 var db *gorm.DB
@@ -42,6 +45,8 @@ func Initialize() {
 
 	db, err = gorm.Open("postgres", dbinfo)
 	db.LogMode(true)
+
+	validations.RegisterCallbacks(db)
 
 	if err != nil {
 		log.Println("Failed to connect to database")
