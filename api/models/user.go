@@ -20,7 +20,7 @@ import (
 type User struct {
 	ID          int       `gorm:"primary_key"`
 	UUID        uuid.UUID `json:"uuid"`
-	AccessLevel int       `json:"access_level" valid:"range(0,1)"`
+	AccessLevel int       `json:"access_level" valid:"range(0|1),numeric"`
 	FirstName   string    `json:"first_name" valid:"required,alpha,length(2|255)"`
 	LastName    string    `json:"last_name" valid:"required,alpha,length(2|255)"`
 	Email       string    `json:"email" valid:"email,required"`
@@ -29,6 +29,7 @@ type User struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   *time.Time
+	Blacklists  []Blacklist `json:"blacklists"`
 }
 
 // UserResponse represents user data that can be returned as response
@@ -74,6 +75,11 @@ func (user *User) BeforeCreate(scope *gorm.Scope) error {
 	scope.SetColumn("CreatedAt", time.Now())
 	scope.SetColumn("UUID", u2)
 	return nil
+}
+
+// IsAdmin Determine whether user is admin or not
+func (user *User) IsAdmin() bool {
+	return user.AccessLevel == 1
 }
 
 // BeforeUpdate is gorm hook that is triggered on every updated on user struct
@@ -124,6 +130,14 @@ func (user *User) UnmarshalJSON(data []byte) error {
 
 		if strings.ToLower(key) == "pass" {
 			user.SetPassword(value)
+		}
+
+		if strings.ToLower(key) == "access_level" {
+			intValue, err := strconv.Atoi(value)
+			if err != nil {
+				return err
+			}
+			user.AccessLevel = intValue
 		}
 
 		if strings.ToLower(key) == "birth_date" {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	// Postgres to database connection
@@ -89,6 +90,32 @@ func Initialize() {
 	db.AutoMigrate(&models.User{})
 	db.AutoMigrate(&models.Vote{})
 	db.AutoMigrate(&models.Blacklist{})
+}
+
+// CreateSystemAdmin createSystemAdmin
+func CreateSystemAdmin() {
+	user := models.User{
+		FirstName:   "Kaba",
+		LastName:    "CONDE",
+		AccessLevel: 1,
+		Email:       "kabaconde@gmail.com",
+	}
+
+	user.SetPassword("kabaconde")
+
+	dateOfBirth, err := time.Parse("02-01-2006", "01-01-1990")
+	if err != nil {
+		log.Fatal(err)
+	}
+	user.DateOfBirth = dateOfBirth
+
+	db.NewRecord(user) // => returns `true` as primary key is blank
+
+	if err := db.Create(&user); err.Error != nil {
+		log.Println("Error creating CreateSystemAdmin : " + user.FirstName + " " + user.LastName)
+		log.Println(err)
+		return
+	}
 }
 
 // GetDB get gorm db instance

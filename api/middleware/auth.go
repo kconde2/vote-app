@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"time"
 
@@ -21,7 +20,7 @@ type login struct {
 
 var identityKey = "uuid"
 
-// AuthMiddleware : The authmiddlare handling jwt token security
+// AuthMiddleware : The authmiddleware handling jwt token security
 func AuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Realm:           "test zone",
@@ -64,7 +63,6 @@ func authenticator(c *gin.Context) (interface{}, error) {
 
 	// Compare the stored hashed password, with the hashed version of the password that was received
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		log.Println(err)
 		// If the two passwords don't match, return a 401 status
 		return nil, jwt.ErrFailedAuthentication
 	}
@@ -86,13 +84,14 @@ func LoginResponse(c *gin.Context, code int, token string, expire time.Time) {
 // Callback function that will be called during login.
 // Using this function it is possible to add additional payload data to the webtoken.
 func payloadFunc(data interface{}) jwt.MapClaims {
-	log.Println("payloadFunc")
+
 	if v, ok := data.(*models.User); ok {
 		return jwt.MapClaims{
-			"uuid":        v.UUID,
-			"accessLevel": v.AccessLevel,
+			"uuid":         v.UUID,
+			"access_level": v.AccessLevel,
 		}
 	}
+
 	return jwt.MapClaims{}
 }
 

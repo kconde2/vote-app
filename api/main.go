@@ -13,6 +13,7 @@ func main() {
 	log.Println("Starting server...")
 
 	db.Initialize()
+	db.CreateSystemAdmin()
 
 	r := gin.Default()
 	route := r.Group("/")
@@ -22,9 +23,10 @@ func main() {
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}
+
 	route.POST("/login", authMiddleware.LoginHandler)
 
-	// Managa protected routes
+	// Manage protected routes
 	route.Use(authMiddleware.MiddlewareFunc())
 	{
 		users := route.Group("/users")
