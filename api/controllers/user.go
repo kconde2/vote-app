@@ -6,12 +6,13 @@ import (
 	"github.com/kconde2/vote-app/api/db"
 	"github.com/kconde2/vote-app/api/models"
 
+	jwt "github.com/appleboy/gin-jwt/v2"
+
 	"github.com/gin-gonic/gin"
 )
 
 // GetUsers g
 func GetUsers(c *gin.Context) {
-
 	var users []models.User
 	db := db.GetDB()
 	db.Find(&users)
@@ -22,11 +23,25 @@ func GetUsers(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	var user models.User
 	var db = db.GetDB()
+
 	if err := c.BindJSON(&user); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
+	}
+
+	// Check admin right creation
+	if user.IsAdmin() {
+		// Retrive user information
+		jwtClaims := jwt.ExtractClaims(c)
+		authUserAccessLevel := jwtClaims["access_level"].(float64)
+		if authUserAccessLevel != 1 {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "Sorry but you can't created admin user",
+			})
+			return
+		}
 	}
 
 	// Create user if no errors throws by Validate method in user model

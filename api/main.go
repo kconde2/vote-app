@@ -13,18 +13,23 @@ func main() {
 	log.Println("Starting server...")
 
 	db.Initialize()
+	db.CreateSystemAdmin()
 
 	r := gin.Default()
+	route := r.Group("/")
 
-	// Generates JWT token
+	// Manage login (auth + generate JWT)
 	authMiddleware, err := middleware.AuthMiddleware()
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}
-	v1 := r.Group("/")
+
+	route.POST("/login", authMiddleware.LoginHandler)
+
+	// Manage protected routes
+	route.Use(authMiddleware.MiddlewareFunc())
 	{
-		v1.POST("/login", authMiddleware.LoginHandler)
-		users := v1.Group("/users")
+		users := route.Group("/users")
 		{
 			users.GET("/", controllers.GetUsers)
 			users.POST("/", controllers.CreateUser)
@@ -32,7 +37,7 @@ func main() {
 			users.DELETE("/:uuid", controllers.DeleteUser)
 		}
 
-		votes := v1.Group("/votes")
+		votes := route.Group("/votes")
 		{
 			votes.GET("/", controllers.GetVotes)
 			votes.POST("/", controllers.CreateVote)
@@ -40,9 +45,6 @@ func main() {
 			votes.DELETE("/:uuid", controllers.DeleteVote)
 		}
 	}
-	// Trying to get claim data from jwt
-	test := authMiddleware.GetClaimsFromJWT
-	log.Println("claim here",test)
 
 	r.Run(":8080")
 }
