@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"time"
 
@@ -64,15 +63,11 @@ func authenticator(c *gin.Context) (interface{}, error) {
 
 	// Compare the stored hashed password, with the hashed version of the password that was received
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-
-		log.Println("========>")
 		var blacklist models.Blacklist
 		ipAddress := c.ClientIP()
-		log.Println("<========>")
-		err := db.Where("ip_address = ?", ipAddress).First(&blacklist)
 
 		// if ip not found we register it
-		if err.RecordNotFound() {
+		if err := db.Where("ip_address = ?", ipAddress).First(&blacklist); err.RecordNotFound() {
 			blacklist = models.Blacklist{IPAddress: ipAddress, UserID: user.ID}
 			db.Create(&blacklist)
 		} else {
