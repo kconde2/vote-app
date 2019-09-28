@@ -9,7 +9,7 @@ type Blacklist struct {
 	ID         int `gorm:"primary_key"`
 	UserID     int
 	IPAddress  string `json:"ip_address" binding:"required"`
-	LoginCount int
+	LoginCount int    `gorm:"default:'1'"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

@@ -63,6 +63,23 @@ func authenticator(c *gin.Context) (interface{}, error) {
 
 	// Compare the stored hashed password, with the hashed version of the password that was received
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		var blacklist models.Blacklist
+		ipAddress := c.ClientIP()
+
+		// if ip not found we register it
+		if err := db.Where("ip_address = ?", ipAddress).First(&blacklist); err.RecordNotFound() {
+			blacklist = models.Blacklist{IPAddress: ipAddress, UserID: user.ID}
+			db.Create(&blacklist)
+		} else {
+			// we found the save ipAddress
+			if blacklist.LoginCount == 3 {
+				return nil, errors.New("sorry 😎! you're now blacklisted. too many login attempt")
+			}
+			// otherwise we increase login count
+			blacklist.LoginCount++
+			db.Save(&blacklist)
+		}
+    
 		// If the two passwords don't match, return a 401 status
 		return nil, jwt.ErrFailedAuthentication
 	}
