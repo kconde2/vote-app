@@ -14,14 +14,13 @@ func main() {
 
 	db.Initialize()
 
-	
 	r := setupRouter()
 	r.Run(":8080")
 }
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
-	
+
 	// Generates JWT token
 	authMiddleware, err := middleware.AuthMiddleware()
 	if err != nil {

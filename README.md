@@ -70,7 +70,7 @@ make full-tests
 ```
 To launch signgle test
 ```
-single-test method_name
+make single-test method_name
 ```
 ## Contributions
 

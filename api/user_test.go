@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"bytes"
 
-	"github.com/gin-gonic/gin"
+	// "github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	// "github.com/kconde2/vote-app/api/controllers"
 )
@@ -22,7 +22,7 @@ func TestAddUser(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 
-	router := gin.Default()
+	router := setupRouter()
 	router.ServeHTTP(rr, req)
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v request %v", status, http.StatusOK, req)
@@ -34,19 +34,17 @@ func TestAddUser(t *testing.T) {
 }
 
 func TestGetUsers(t *testing.T) {
-	// router := gin.Default()
 	router := setupRouter()
 	req, err := http.NewRequest("GET", "/users/", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 	rr := httptest.NewRecorder()
-	// handler := http.HandlerFunc(controllers.GetUsers)
 	router.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v router %v",
-			status, http.StatusOK, req)
+			status, http.StatusOK, rr)
 	}
 	// expected := `[{""}]`
 	// if rr.Body.String() != expected {
