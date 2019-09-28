@@ -13,6 +13,7 @@ func main() {
 	log.Println("Starting server...")
 
 	db.Initialize()
+	db.CreateSystemAdmin()
 
 	r := setupRouter()
 	r.Run(":8080")
@@ -20,16 +21,20 @@ func main() {
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
+	route := r.Group("/")
 
-	// Generates JWT token
+	// Manage login (auth + generate JWT)
 	authMiddleware, err := middleware.AuthMiddleware()
 	if err != nil {
 		log.Fatal("JWT Error:" + err.Error())
 	}
-	v1 := r.Group("/")
+
+	route.POST("/login", authMiddleware.LoginHandler)
+
+	// Manage protected routes
+	route.Use(authMiddleware.MiddlewareFunc())
 	{
-		v1.POST("/login", authMiddleware.LoginHandler)
-		users := v1.Group("/users")
+		users := route.Group("/users")
 		{
 			users.GET("/", controllers.GetUsers)
 			users.POST("/", controllers.CreateUser)
@@ -37,7 +42,7 @@ func setupRouter() *gin.Engine {
 			users.DELETE("/:uuid", controllers.DeleteUser)
 		}
 
-		votes := v1.Group("/votes")
+		votes := route.Group("/votes")
 		{
 			votes.GET("/", controllers.GetVotes)
 			votes.POST("/", controllers.CreateVote)
