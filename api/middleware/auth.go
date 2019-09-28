@@ -79,7 +79,7 @@ func authenticator(c *gin.Context) (interface{}, error) {
 			blacklist.LoginCount++
 			db.Save(&blacklist)
 		}
-
+    
 		// If the two passwords don't match, return a 401 status
 		return nil, jwt.ErrFailedAuthentication
 	}
