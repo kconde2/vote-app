@@ -63,6 +63,15 @@ If your "go" container wont build, check build errors  with
 docker-compose up
 ```
 
+## Run Tests
+To launch all tests 
+```
+make full-tests
+```
+To launch signgle test
+```
+single-test method_name
+```
 ## Contributions
 
 - Pull last version of `develop` branch

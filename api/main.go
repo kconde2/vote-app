@@ -40,9 +40,6 @@ func main() {
 			votes.DELETE("/:uuid", controllers.DeleteVote)
 		}
 	}
-	// Trying to get claim data from jwt
-	test := authMiddleware.GetClaimsFromJWT
-	log.Println("claim here",test)
 
 	r.Run(":8080")
 }
