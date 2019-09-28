@@ -64,6 +64,11 @@ func (user *User) SetPassword(password string) {
 	}
 }
 
+// IsAdmin Determine whether user is admin or not
+func (user *User) IsAdmin() bool {
+	return user.AccessLevel == 1
+}
+
 // BeforeCreate is gorm hook that is triggered before saving new user
 func (user *User) BeforeCreate(scope *gorm.Scope) error {
 	// or error handling
@@ -75,11 +80,6 @@ func (user *User) BeforeCreate(scope *gorm.Scope) error {
 	scope.SetColumn("CreatedAt", time.Now())
 	scope.SetColumn("UUID", u2)
 	return nil
-}
-
-// IsAdmin Determine whether user is admin or not
-func (user *User) IsAdmin() bool {
-	return user.AccessLevel == 1
 }
 
 // BeforeUpdate is gorm hook that is triggered on every updated on user struct

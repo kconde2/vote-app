@@ -41,8 +41,8 @@ func main() {
 		{
 			votes.GET("/", controllers.GetVotes)
 			votes.POST("/", controllers.CreateVote)
+			votes.GET("/:uuid", controllers.RetrieveVote)
 			votes.PUT("/:uuid", controllers.UpdateVote)
-			votes.DELETE("/:uuid", controllers.DeleteVote)
 		}
 	}
 
