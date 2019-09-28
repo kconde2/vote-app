@@ -15,7 +15,7 @@ type Vote struct {
 	UUID        uuid.UUID  `json:"uuid"`
 	Title       string     `json:"title" valid:"required"`
 	Description string     `json:"desc" valid:"required"`
-	UUIDVote    []User     `json:"uuid_votes" gorm:"many2many:votes_users;association_foreignkey:UUID;foreignkey:uuid"`
+	UUIDVote    []*User    `json:"uuid_votes" gorm:"many2many:votes_users;association_foreignkey:UUID;foreignkey:uuid"`
 	StartDate   time.Time  `json:"start_date"`
 	EndDate     time.Time  `json:"end_date"`
 	CreatedAt   time.Time  `json:"created_at"`
