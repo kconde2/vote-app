@@ -14,8 +14,14 @@ func main() {
 
 	db.Initialize()
 
-	r := gin.Default()
+	
+	r := setupRouter()
+	r.Run(":8080")
+}
 
+func setupRouter() *gin.Engine {
+	r := gin.Default()
+	
 	// Generates JWT token
 	authMiddleware, err := middleware.AuthMiddleware()
 	if err != nil {
@@ -40,6 +46,5 @@ func main() {
 			votes.DELETE("/:uuid", controllers.DeleteVote)
 		}
 	}
-
-	r.Run(":8080")
+	return r
 }
