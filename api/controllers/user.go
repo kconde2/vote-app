@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetUsers g
+// GetUsers retrieve all users registered
 func GetUsers(c *gin.Context) {
 	var users []models.User
 	db := db.GetDB()
@@ -19,7 +19,7 @@ func GetUsers(c *gin.Context) {
 	c.JSON(200, users)
 }
 
-// CreateUser c
+// CreateUser create new user and save it into database
 func CreateUser(c *gin.Context) {
 	var user models.User
 	var db = db.GetDB()
@@ -65,7 +65,7 @@ func CreateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, &user)
 }
 
-// UpdateUser u
+// UpdateUser update user information according to business logic
 func UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 	var user models.User

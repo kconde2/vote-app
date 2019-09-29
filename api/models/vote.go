@@ -30,7 +30,7 @@ type VoteResponse struct {
 	Description string    `json:"desc"`
 }
 
-// BeforeCreate is gorm hook that is triggered before saving new user
+// BeforeCreate is gorm hook that is triggered before saving new vote
 func (vote *Vote) BeforeCreate(scope *gorm.Scope) error {
 	// or error handling
 	u2, err := uuid.NewV4()
@@ -43,7 +43,7 @@ func (vote *Vote) BeforeCreate(scope *gorm.Scope) error {
 	return nil
 }
 
-// BeforeUpdate is gorm hook that is triggered on every updated on user struct
+// BeforeUpdate is gorm hook that is triggered on every updated on vote struct
 func (vote *Vote) BeforeUpdate(scope *gorm.Scope) error {
 	scope.SetColumn("UpdatedAt", time.Now())
 	return nil
