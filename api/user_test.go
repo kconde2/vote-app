@@ -6,11 +6,10 @@ import (
 	"net/http/httptest"
 	"bytes"
 
-	// "github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	// "github.com/kconde2/vote-app/api/controllers"
 )
 
+// Unit test that checks CreateUser method
 func TestAddUser(t *testing.T) {
 	
 	var jsonStr = []byte(`{"first_name":"Adam","last_name":"Sow","email":"dachic@gmail.com","pass":"unit_test","birth_date":"19-10-1997"}`)
@@ -33,13 +32,19 @@ func TestAddUser(t *testing.T) {
 	assert.Equal(t, 200, rr.Code)
 }
 
+// Unit test that checks GetUsers method
 func TestGetUsers(t *testing.T) {
-	router := setupRouter()
+	
 	req, err := http.NewRequest("GET", "/users/", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	rr := httptest.NewRecorder()
+
+	router := setupRouter()
+
+	// Nul pointer exception...
 	router.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
