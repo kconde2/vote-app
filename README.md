@@ -1,6 +1,6 @@
 # Vote App
 
-Vote App is a (GO+ReactJS) app that allows users to vote online on draft laws.
+Vote App is a (Golang) app that allows users to vote online on draft laws.
 
 ## Requirements
 
@@ -8,7 +8,7 @@ Vote App is a (GO+ReactJS) app that allows users to vote online on draft laws.
 - Git
 - docker latest (`docker --version`) (https://docs.docker.com/install/)
 - docker-compose latest (`docker-compose --version`) (https://docs.docker.com/compose/install/)
-- make (make --version)
+- make (`make --version`)
 
 ## Installation
 
@@ -38,16 +38,9 @@ or
 cd && go run main.go
 ```
 
-Run this command to run **front** and watch files
-
-```
-makef fstart
-```
-
 ## Usage
 
 - GO API : [http://localhost:4000](http://localhost:4000)
-- Vote App : [http://localhost:3000](http://localhost:3000)
 
 ## Useful commands
 
@@ -63,14 +56,14 @@ If your "go" container wont build, check build errors  with
 docker-compose up
 ```
 
-## Run Tests
-To launch all tests 
+## Run Tests (In process)
+To launch all tests
 ```
 make full-tests
 ```
 To launch signgle test
 ```
-make single-test method_name
+docker-compose exec go go test -v -run function-name
 ```
 ## Contributions
 
