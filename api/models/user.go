@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -23,13 +24,14 @@ type User struct {
 	AccessLevel int       `json:"access_level" valid:"range(0|1),numeric"`
 	FirstName   string    `json:"first_name" valid:"required,alpha,length(2|255)"`
 	LastName    string    `json:"last_name" valid:"required,alpha,length(2|255)"`
-	Email       string    `json:"email" valid:"email,required"`
+	Email       string    `json:"email" valid:"email,required" gorm:"unique;not null"`
 	Password    string    `json:"pass" valid:"required"`
 	DateOfBirth time.Time `json:"birth_date" valid:"required"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   *time.Time
 	Blacklists  []Blacklist `json:"blacklists"`
+	Votes       []*Vote     `json:"uuid_votes" gorm:"many2many:votes_users;association_foreignkey:UUID;foreignkey:uuid"`
 }
 
 // UserResponse represents user data that can be returned as response
@@ -47,12 +49,6 @@ func (user User) Validate(db *gorm.DB) {
 	if age := utils.Age(user.DateOfBirth); age < 18 {
 		db.AddError(errors.New("user: age need to be 18+"))
 	}
-
-	// check if user already exists
-	var u User
-	if !db.Where("email = ?", user.Email).First(&u).RecordNotFound() {
-		db.AddError(errors.New("user: already exists"))
-	}
 }
 
 // SetPassword create a hashed password for user
@@ -62,6 +58,11 @@ func (user *User) SetPassword(password string) {
 	} else {
 		user.Password = string(hashedPassword)
 	}
+}
+
+// IsAdmin Determine whether user is admin or not
+func (user *User) IsAdmin() bool {
+	return user.AccessLevel == 1
 }
 
 // BeforeCreate is gorm hook that is triggered before saving new user
@@ -77,11 +78,6 @@ func (user *User) BeforeCreate(scope *gorm.Scope) error {
 	return nil
 }
 
-// IsAdmin Determine whether user is admin or not
-func (user *User) IsAdmin() bool {
-	return user.AccessLevel == 1
-}
-
 // BeforeUpdate is gorm hook that is triggered on every updated on user struct
 func (user *User) BeforeUpdate(scope *gorm.Scope) error {
 	scope.SetColumn("UpdatedAt", time.Now())
@@ -93,17 +89,14 @@ func (user User) MarshalJSON() ([]byte, error) {
 
 	var ur UserResponse
 	layout := "02-01-2006"
-
-	// Custom date in dd-mm-yyy format
-	year, month, day := user.DateOfBirth.Date()
-	date := strconv.Itoa(day) + "-" + strconv.Itoa(int(month)) + "-" + strconv.Itoa(year)
-	t, _ := time.Parse(layout, date)
+	t := user.DateOfBirth
+	dateOfBirth := fmt.Sprintf("%s", t.Format(layout))
 
 	ur.UUID = user.UUID
 	ur.FirstName = user.FirstName
 	ur.LastName = user.LastName
 	ur.Email = user.Email
-	ur.DateOfBirth = t.Format(layout)
+	ur.DateOfBirth = dateOfBirth
 	return json.Marshal(ur)
 }
 
