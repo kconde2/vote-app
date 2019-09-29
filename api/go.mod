@@ -23,6 +23,7 @@ require (
 	github.com/mattn/go-isatty v0.0.9 // indirect
 	github.com/qor/validations v0.0.0-20171228122639-f364bca61b46
 	github.com/satori/go.uuid v1.2.0
+	github.com/stretchr/testify v1.3.0
 	github.com/ugorji/go v1.1.7 // indirect
 	golang.org/x/crypto v0.0.0-20190325154230-a5d413f7728c
 	golang.org/x/sys v0.0.0-20190919044723-0c1ff786ef13 // indirect

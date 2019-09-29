@@ -15,7 +15,14 @@ func main() {
 	db.Initialize()
 	db.CreateSystemAdmin()
 
+	
+	r := setupRouter()
+	r.Run(":8080")
+}
+
+func setupRouter() *gin.Engine {
 	r := gin.Default()
+	
 	route := r.Group("/")
 
 	// Manage login (auth + generate JWT)
@@ -45,6 +52,5 @@ func main() {
 			votes.PUT("/:uuid", controllers.UpdateVote)
 		}
 	}
-
-	r.Run(":8080")
+	return r
 }
