@@ -31,6 +31,3 @@ enter:
 
 full-tests:
 	docker-compose exec go go test -v
-
-single-test:
-	docker-compose exec go go test -v -run

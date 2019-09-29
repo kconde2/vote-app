@@ -56,14 +56,14 @@ If your "go" container wont build, check build errors  with
 docker-compose up
 ```
 
-## Run Tests
+## Run Tests (In process)
 To launch all tests
 ```
 make full-tests
 ```
 To launch signgle test
 ```
-make single-test method_name
+docker-compose exec go go test -v -run function-name
 ```
 ## Contributions
 
