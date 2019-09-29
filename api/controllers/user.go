@@ -24,24 +24,23 @@ func CreateUser(c *gin.Context) {
 	var user models.User
 	var db = db.GetDB()
 
+	// Check admin right creation
+	// Retrive user information
+	jwtClaims := jwt.ExtractClaims(c)
+	authUserAccessLevel := jwtClaims["access_level"].(float64)
+
+	if authUserAccessLevel != 1 {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "Sorry 🤔 but you can't created admin user",
+		})
+		return
+	}
+
 	if err := c.BindJSON(&user); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
-	}
-
-	// Check admin right creation
-	if user.IsAdmin() {
-		// Retrive user information
-		jwtClaims := jwt.ExtractClaims(c)
-		authUserAccessLevel := jwtClaims["access_level"].(float64)
-		if authUserAccessLevel != 1 {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Sorry but you can't created admin user",
-			})
-			return
-		}
 	}
 
 	// Create user if no errors throws by Validate method in user model
@@ -94,10 +93,43 @@ func UpdateUser(c *gin.Context) {
 		var newUser models.User
 		c.Bind(&newUser)
 
+		if newUser.FirstName != "" {
+			user.FirstName = newUser.FirstName
+		}
+
+		if newUser.LastName != "" {
+			user.FirstName = newUser.LastName
+		}
+
+		if newUser.Email != "" {
+			user.Email = newUser.Email
+		}
+
+		if newUser.Email != "" {
+			user.Email = newUser.Email
+		}
+
 		// Update multiple attributes with `struct`, will only update those changed
-		result := db.Model(&user).Update(map[string]interface{}{"first_name": newUser.FirstName, "last_name": newUser.LastName, "email": newUser.Email, "pass": newUser.Password})
+
+		if err := db.Save(&user); err != nil {
+			// convert array of errors to JSON
+			errs := err.GetErrors()
+
+			if len(errs) > 0 {
+				strErrors := make([]string, len(errs))
+				for i, err := range errs {
+					strErrors[i] = err.Error()
+				}
+
+				// return errors
+				c.JSON(http.StatusUnprocessableEntity, gin.H{
+					"errors": strErrors,
+				})
+				return
+			}
+		}
 		// Display modified data in JSON message "success"
-		c.JSON(200, gin.H{"success": result})
+		c.JSON(http.StatusOK, &user)
 
 	}
 

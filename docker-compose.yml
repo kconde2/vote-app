@@ -26,14 +26,6 @@ services:
     depends_on:
       - db
     environment: *commonEnviroment
-  react:
-    image: node:lts-alpine
-    working_dir: /home/node/app
-    volumes:
-      - ./app:/home/node/app
-    ports:
-      - '3000:3000'
-    command: 'yarn start'
   adminer:
     image: 'adminer:latest'
     ports:

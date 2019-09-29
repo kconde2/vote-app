@@ -21,17 +21,8 @@ clean:
 
 run: go-logs
 
-fstart:
-	docker-compose run react yarn start
-
 set-up:
 	go get -u ./...
-
-finstall:
-	docker-compose exec react yarn install
-
-fclean:
-	rm -rf app/node_modules app/yarn.lock
 
 install: set-up build
 
