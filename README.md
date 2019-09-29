@@ -42,29 +42,42 @@ cd && go run main.go
 
 - GO API : [http://localhost:4000](http://localhost:4000)
 
+## Postman
+
+- API Collection link to import Vote collection : https://www.getpostman.com/collections/fc1fc5458b8afaa1a0a7
+- Make sure to define `url` and `token` environnements variables
+
 ## Useful commands
 
 - Stop all containers `make down`
 - Build images `make build`
 
 ## Usefull links
+
 - Validations : https://github.com/qor/validations
 
 ## Bugs fix
-If your "go" container wont build, check build errors  with
+
+If your "go" container wont build, check build errors with
+
 ```
 docker-compose up
 ```
 
 ## Run Tests (In process)
+
 To launch all tests
+
 ```
 make full-tests
 ```
+
 To launch signgle test
+
 ```
 docker-compose exec go go test -v -run function-name
 ```
+
 ## Contributions
 
 - Pull last version of `develop` branch
