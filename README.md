@@ -1,6 +1,6 @@
 # Vote App
 
-Vote App is a (Golang) app that allows users to vote online on draft laws.
+Vote App is a (Golang & VueJS) app that allows users to vote online on draft laws.
 
 ## Requirements
 
