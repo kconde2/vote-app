@@ -1,19 +1,19 @@
 <template>
   <div :class="'field field-' + type">
     <label v-if="this.inputTypes.includes(type)">
-      <span>{{ label }}</span>
+      <span v-if="label">{{ label }}</span>
       <input :type="type" :name="name" />
     </label>
 
     <label v-if="type == 'select'">
-      <span>{{ label }}</span>
+      <span v-if="label">{{ label }}</span>
       <select :name="name">
         <slot></slot>
       </select>
     </label>
 
     <label v-if="type == 'textarea'">
-      <span>{{ label }}</span>
+      <span v-if="label">{{ label }}</span>
       <textarea :name="name"></textarea>
     </label>
   </div>
@@ -30,6 +30,7 @@ export default {
     label: String
   },
   data: () => ({
+    values: {},
     inputTypes: [
       "text",
       "number",
@@ -56,16 +57,16 @@ export default {
       "url",
       "week"
     ],
-    fieldTypes: ["input", "select", "textarea"]
+    fieldTypes: ["select", "textarea"]
   }),
-  mounted: () => {
-    //console.log("beforeCreate");
-    // if (this.fieldTypes.indexOf(type) < 0) {
-    //   throw new Error("[Fied Component]");
-    // }
+  mounted() {
+    this.fieldTypes = [...this.fieldTypes, ...this.inputTypes];
+
+    if (!this.fieldTypes.includes(this.type)) {
+      throw new Error("[Fied Component] |" + this.type + " is not defined");
+    }
   }
 };
 </script>
 
-<style>
-</style>
+<style></style>

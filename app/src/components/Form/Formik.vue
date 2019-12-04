@@ -1,5 +1,5 @@
 <template>
-  <form @submit="handleSubmit" :method="method">
+  <form @submit.prevent="handleSubmit" :method="method">
     <slot></slot>
     <button type="submit">{{ submitLabel }}</button>
   </form>
@@ -11,7 +11,7 @@ export default {
     initialValues: Object,
     submitLabel: String,
     method: {
-      default: "POST",
+      default: "post",
       type: String
     }
   },
@@ -24,5 +24,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
