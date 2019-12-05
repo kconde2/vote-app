@@ -15,10 +15,28 @@ export default {
       type: String
     }
   },
-  data: () => ({}),
+  data: () => ({
+    formValues: {}
+  }),
+  provide: function() {
+    return {
+      updateFields: this.updateFields
+    };
+  },
   methods: {
     handleSubmit: function() {
       this.$emit("onSubmit", this.formValues);
+    },
+    updateFields: function(type, name, value) {
+      if (type == "checkbox") {
+        if (this.formValues.hasOwnProperty(name)) {
+          this.formValues[name] = [value, ...this.formValues[name]];
+        } else {
+          this.formValues[name] = [value];
+        }
+      } else {
+        this.formValues[name] = value;
+      }
     }
   }
 };

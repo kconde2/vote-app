@@ -1,21 +1,27 @@
 <template>
   <div :class="'field field-' + type">
-    <label v-if="this.inputTypes.includes(type)">
-      <span v-if="label">{{ label }}</span>
-      <input :type="type" :name="name" />
-    </label>
+    <input
+      v-if="this.regularFieldTypes.includes(type)"
+      :type="type"
+      :name="name"
+      @input="updateFieldData"
+    />
 
-    <label v-if="type == 'select'">
-      <span v-if="label">{{ label }}</span>
-      <select :name="name">
-        <slot></slot>
-      </select>
-    </label>
+    <input
+      v-if="type == 'checkbox'"
+      :type="type"
+      :value="value"
+      :name="name"
+      @input="updateFieldData"
+    />
 
-    <label v-if="type == 'textarea'">
-      <span v-if="label">{{ label }}</span>
-      <textarea :name="name"></textarea>
-    </label>
+    <input v-if="type == 'radio'" :type="type" :value="value" :name="name" @input="updateFieldData" />
+
+    <select v-if="type == 'select'" :name="name" @input="updateFieldData">
+      <slot></slot>
+    </select>
+
+    <textarea v-if="type == 'textarea'" :name="name" @input="updateFieldData"></textarea>
   </div>
 </template>
 
@@ -27,15 +33,17 @@ export default {
       default: "input",
       type: String
     },
-    label: String
+    label: String,
+    value: String,
+    nameArray: []
   },
+  inject: ["updateFields"],
   data: () => ({
     values: {},
-    inputTypes: [
+    regularFieldTypes: [
       "text",
       "number",
       "button",
-      "checkbox",
       "color",
       "date",
       "datetime-local",
@@ -46,7 +54,6 @@ export default {
       "month",
       "number",
       "pasword",
-      "radio",
       "range",
       "reset",
       "search",
@@ -57,13 +64,17 @@ export default {
       "url",
       "week"
     ],
-    fieldTypes: ["select", "textarea"]
+    fieldTypes: ["select", "textarea", "checkbox", "radio"]
   }),
   mounted() {
-    this.fieldTypes = [...this.fieldTypes, ...this.inputTypes];
-
+    this.fieldTypes = [...this.fieldTypes, ...this.regularFieldTypes];
     if (!this.fieldTypes.includes(this.type)) {
       throw new Error("[Fied Component] |" + this.type + " is not defined");
+    }
+  },
+  methods: {
+    updateFieldData: function(event) {
+      this.updateFields(this.type, this.name, event.target.value);
     }
   }
 };
