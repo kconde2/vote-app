@@ -5,6 +5,8 @@
       :type="type"
       :name="name"
       @input="updateFieldData"
+      :value="this.initialValues.hasOwnProperty(name) ? this.initialValues[name] : ''"
+      v-bind="$attrs"
     />
 
     <input
@@ -13,11 +15,21 @@
       :value="value"
       :name="name"
       @input="updateFieldData"
+      :checked="this.initialValues.hasOwnProperty(name) && this.initialValues[name].includes(value)"
+      v-bind="$attrs"
     />
 
-    <input v-if="type == 'radio'" :type="type" :value="value" :name="name" @input="updateFieldData" />
+    <input
+      v-if="type == 'radio'"
+      :type="type"
+      :value="value"
+      :name="name"
+      @input="updateFieldData"
+      :checked="(this.initialValues.hasOwnProperty(name) && this.initialValues[name] == value)"
+      v-bind="$attrs"
+    />
 
-    <select v-if="type == 'select'" :name="name" @input="updateFieldData">
+    <select v-if="type == 'select'" :name="name" @input="updateFieldData" v-bind="$attrs">
       <slot></slot>
     </select>
 
@@ -34,12 +46,10 @@ export default {
       type: String
     },
     label: String,
-    value: String,
-    nameArray: []
+    value: String
   },
-  inject: ["updateFields"],
+  inject: ["initialValues", "updateFields"],
   data: () => ({
-    values: {},
     regularFieldTypes: [
       "text",
       "number",

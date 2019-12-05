@@ -18,19 +18,30 @@ export default {
   data: () => ({
     formValues: {}
   }),
+  mounted() {
+    this.formValues = this.initialValues;
+  },
   provide: function() {
     return {
+      initialValues: this.initialValues,
       updateFields: this.updateFields
     };
   },
   methods: {
     handleSubmit: function() {
-      this.$emit("onSubmit", this.formValues);
+      // remove vue metas objects and emit form data
+      this.$emit("on-submit", Object.assign({}, this.formValues));
     },
     updateFields: function(type, name, value) {
       if (type == "checkbox") {
         if (this.formValues.hasOwnProperty(name)) {
-          this.formValues[name] = [value, ...this.formValues[name]];
+          if (this.formValues[name].includes(value)) {
+            this.formValues[name] = this.formValues[name].filter(
+              formValue => value != formValue
+            );
+          } else {
+            this.formValues[name] = [value, ...this.formValues[name]];
+          }
         } else {
           this.formValues[name] = [value];
         }

@@ -55,6 +55,7 @@ cd && go run main.go
 ## Usefull links
 
 - Validations : https://github.com/qor/validations
+- Directives : [click here](./DIRECTIVES.md)
 
 ## Bugs fix
 
