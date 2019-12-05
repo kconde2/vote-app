@@ -56,6 +56,7 @@ cd && go run main.go
 
 - Validations : https://github.com/qor/validations
 - Directives : [click here](./DIRECTIVES.md)
+- Formik use case : `http://localhost:8080/formik`
 
 ## Bugs fix
 
