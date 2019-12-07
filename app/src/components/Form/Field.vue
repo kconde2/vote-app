@@ -1,40 +1,46 @@
 <template>
-  <div :class="'field field-' + type">
-    <input
-      v-if="this.regularFieldTypes.includes(type)"
-      :type="type"
-      :name="name"
-      @input="updateFieldData"
-      :value="this.initialValues.hasOwnProperty(name) ? this.initialValues[name] : ''"
-      v-bind="$attrs"
-    />
+  <input
+    v-if="this.regularFieldTypes.includes(type)"
+    :type="type"
+    :name="name"
+    @input="updateFieldData"
+    :value="this.initialValues.hasOwnProperty(name) ? this.initialValues[name] : ''"
+    v-bind="$attrs"
+    :class="'field field-' + type"
+  />
 
-    <input
-      v-if="type == 'checkbox'"
-      :type="type"
-      :value="value"
-      :name="name"
-      @input="updateFieldData"
-      :checked="this.initialValues.hasOwnProperty(name) && this.initialValues[name].includes(value)"
-      v-bind="$attrs"
-    />
+  <input
+    v-else-if="type == 'checkbox'"
+    :type="type"
+    :value="value"
+    :name="name"
+    @input="updateFieldData"
+    :checked="this.initialValues.hasOwnProperty(name) && this.initialValues[name].includes(value)"
+    v-bind="$attrs"
+    :class="'field field-' + type"
+  />
 
-    <input
-      v-if="type == 'radio'"
-      :type="type"
-      :value="value"
-      :name="name"
-      @input="updateFieldData"
-      :checked="(this.initialValues.hasOwnProperty(name) && this.initialValues[name] == value)"
-      v-bind="$attrs"
-    />
+  <input
+    v-else-if="type == 'radio'"
+    :type="type"
+    :value="value"
+    :name="name"
+    @input="updateFieldData"
+    :checked="(this.initialValues.hasOwnProperty(name) && this.initialValues[name] == value)"
+    v-bind="$attrs"
+    :class="'field field-' + type"
+  />
 
-    <select v-if="type == 'select'" :name="name" @input="updateFieldData" v-bind="$attrs">
-      <slot></slot>
-    </select>
+  <select v-else-if="type == 'select'" :name="name" @input="updateFieldData" v-bind="$attrs">
+    <slot></slot>
+  </select>
 
-    <textarea v-if="type == 'textarea'" :name="name" @input="updateFieldData"></textarea>
-  </div>
+  <textarea
+    v-else-if="type == 'textarea'"
+    :name="name"
+    @input="updateFieldData"
+    :class="'field field-' + type"
+  ></textarea>
 </template>
 
 <script>
@@ -72,7 +78,8 @@ export default {
       "text",
       "time",
       "url",
-      "week"
+      "week",
+      "password"
     ],
     fieldTypes: ["select", "textarea", "checkbox", "radio"]
   }),
@@ -84,6 +91,7 @@ export default {
   },
   methods: {
     updateFieldData: function(event) {
+      this.$emit('input', event.target.value);
       this.updateFields(this.type, this.name, event.target.value);
     }
   }

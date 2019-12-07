@@ -1,0 +1,12 @@
+@import 'variables.scss';
+
+@import '~bootstrap/scss/bootstrap';
+@import './fonts.scss';
+
+body {
+  background-color: #ebeeef;
+  //font-family: 'Segoe UI Regular', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}

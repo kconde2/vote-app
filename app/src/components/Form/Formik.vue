@@ -1,7 +1,9 @@
 <template>
   <form @submit.prevent="handleSubmit" :method="method">
     <slot></slot>
-    <button type="submit">{{ submitLabel }}</button>
+    <slot name="submit-button">
+      <button type="submit">{{ submitLabel }}</button>
+    </slot>
   </form>
 </template>
 
@@ -9,7 +11,10 @@
 export default {
   props: {
     initialValues: Object,
-    submitLabel: String,
+    submitLabel: {
+      default: "Submit",
+      type: String
+    },
     method: {
       default: "post",
       type: String
