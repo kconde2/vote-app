@@ -41,6 +41,7 @@ cd && go run main.go
 ## Usage
 
 - GO API : [http://localhost:4000](http://localhost:4000)
+- Vue App : [http://localhost:8080](http://localhost:8080)
 
 ## Postman
 
@@ -51,6 +52,7 @@ cd && go run main.go
 
 - Stop all containers `make down`
 - Build images `make build`
+- Run only vote app `make vue`
 
 ## Usefull links
 

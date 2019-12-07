@@ -29,5 +29,8 @@ install: set-up build
 enter:
 	docker-compose exec go bash
 
+vue:
+	docker-compose up node
+
 full-tests:
 	docker-compose exec go go test -v
