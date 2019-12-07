@@ -1,6 +1,6 @@
 # Vote App
 
-Vote App is a (Golang) app that allows users to vote online on draft laws.
+Vote App is a (Golang & VueJS) app that allows users to vote online on draft laws.
 
 ## Requirements
 
@@ -55,6 +55,8 @@ cd && go run main.go
 ## Usefull links
 
 - Validations : https://github.com/qor/validations
+- Directives : [click here](./DIRECTIVES.md)
+- Formik use case : `http://localhost:8080/formik`
 
 ## Bugs fix
 

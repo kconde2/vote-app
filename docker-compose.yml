@@ -16,6 +16,7 @@ services:
       - 5432:5432
     volumes:
       - db-data:/var/lib/postgresql/data:rw
+
   go:
     build: ./api
     command: ['fresh', 'main.go']
@@ -26,9 +27,21 @@ services:
     depends_on:
       - db
     environment: *commonEnviroment
+
   adminer:
     image: 'adminer:latest'
     ports:
       - '8081:8080'
+
+  node:
+    build: "./app"
+    volumes:
+      - "./app:/home/node/app"
+    working_dir: "/home/node/app"
+    command: "yarn serve --fix"
+    ports:
+      - 8080:8080
+      - 8000:8000
+
 volumes:
   db-data: {}
