@@ -53,6 +53,7 @@ cd && go run main.go
 - Stop all containers `make down`
 - Build images `make build`
 - Run only vote app `make vue`
+- See Vue logs `docker-compose logs -f node`
 
 ## Usefull links
 
@@ -66,6 +67,18 @@ If your "go" container wont build, check build errors with
 
 ```
 docker-compose up
+```
+
+If your "node" container won't build and you get the "vue-cli-service: not found" error, run
+
+```
+make f-install
+```
+
+then stop all containers and relaunch them 
+
+```
+docker-compose down &&  docker-compose up -d
 ```
 
 ## Run Tests (In process)

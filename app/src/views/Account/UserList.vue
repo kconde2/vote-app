@@ -25,17 +25,12 @@
                 <tr>
                   <th>Firstname</th>
                   <th>Lastname</th>
-                  <th>Age</th>
+                  <th>Date de naissance</th>
                 </tr>
-                <tr>
-                  <td>Jill</td>
-                  <td>Smith</td>
-                  <td>50</td>
-                </tr>
-                <tr>
-                  <td>Eve</td>
-                  <td>Jackson</td>
-                  <td>94</td>
+                <tr v-bind:key="user.uuid" v-for="user in users">
+                  <td>{{ user.first_name }}</td>
+                  <td>{{ user.last_name }}</td>
+                  <td>{{ user.birth_date }}</td>
                 </tr>
               </table>
             </div>
@@ -47,7 +42,27 @@
 </template>
 
 <script>
-export default {};
+import store from "../../store/index";
+
+export default {
+  data: () => ({
+    users: {}
+  }),
+  methods: {
+    getUserList: function() {
+      store
+        .dispatch("getUsers")
+        .then(users => {
+          this.users = users;
+          console.log(users);
+        })
+        .catch(() => {});
+    }
+  },
+  beforeMount() {
+    this.getUserList();
+  }
+};
 </script>
 
 <style>

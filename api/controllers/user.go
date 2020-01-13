@@ -31,7 +31,7 @@ func CreateUser(c *gin.Context) {
 
 	if authUserAccessLevel != 1 {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "Sorry 🤔 but you can't created admin user",
+			"error": "Sorry 🤔 but you can't create admin user",
 		})
 		return
 	}
