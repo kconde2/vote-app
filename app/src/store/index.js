@@ -39,7 +39,7 @@ export default new Vuex.Store({
         }
       };
       return Api.post("users/", credentials, context.state.header).then(() => {
-        // context.commit('setCurrentUser', jwt);
+
       }).catch(error => {
         // Display error messages about bad password
         return Promise.reject(error);
