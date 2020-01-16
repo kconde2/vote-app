@@ -135,7 +135,8 @@ export default {
       birth_date: "",
       email: "",
       pass: "",
-      passwordConfirm: ""
+      passwordConfirm: "",
+      access_level: 1
     },
     errors: {
       status: false,
