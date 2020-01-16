@@ -1,4 +1,3 @@
-// import Vue from 'vue';
 import store from './index';
 import axios from "axios";
 
@@ -12,7 +11,7 @@ export default {
   post(url, data, headers) {
     return axios
       .post(store.state.apiBaseUrl + url, data, headers)
-      .then(response => Promise.resolve(response))
+      .then(response => Promise.resolve(response.data))
       .catch(error => Promise.reject(error));
   },
 

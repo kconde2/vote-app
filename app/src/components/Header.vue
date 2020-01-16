@@ -1,6 +1,5 @@
 <template>
   <fragment>
-
     <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
       <div class="container">
         <router-link :to="{ name: 'dashboard'}" class="navbar-brand">VoteApp</router-link>
@@ -40,10 +39,10 @@
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-            >Bonjour Kaba</a>
+            >Hi user</a>
             <div class="dropdown-menu" aria-labelledby="user-account">
               <a class="dropdown-item" href="#">Mon compte</a>
-              <a class="dropdown-item" href="#">Se déconnecter</a>
+              <a class="dropdown-item" href="#" @click="logout">Se déconnecter</a>
             </div>
           </li>
         </ul>
@@ -53,7 +52,28 @@
 </template>
 
 <script>
-export default {};
+import store from "../store/index";
+
+export default {
+  data: () => ({}),
+  methods: {
+    logout: function() {
+      // Call Vuex action
+      store
+        .dispatch("logout")
+        .then(() => {
+          // redirect to dashboard
+          this.$router.push({
+            name: "login"
+          });
+        })
+        .catch(() => {
+          // handle errors
+          this.error = true;
+        });
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>

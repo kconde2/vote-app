@@ -19,9 +19,10 @@
       <div class="col-12">
         <div class="card border-0">
           <div class="card-body">
-            <h5 class="card-title">Title</h5>
+            <h5 class="card-title">List of users</h5>
             <div class="card-text table-responsive">
-              <table style="width:100%" class="table table-bordered">
+              <p v-if="!users.length">No users found</p>
+              <table v-if="users.length" style="width:100%" class="table table-bordered">
                 <tr>
                   <th>Firstname</th>
                   <th>Lastname</th>
@@ -54,7 +55,6 @@ export default {
         .dispatch("getUsers")
         .then(users => {
           this.users = users;
-          console.log(users);
         })
         .catch(() => {});
     }
