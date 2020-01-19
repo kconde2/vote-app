@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="dashboard mt-2">
-      <h1 class="h2 py-2">Hi, welcome back!</h1>
+      <h1 class="h2 py-2">Hi, welcome !</h1>
     </div>
 
     <div class="row">

@@ -8,7 +8,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     apiBaseUrl: 'http://localhost:4000/',
-    currentUser: null,
+    currentUser: localStorage.getItem('user') || {},
     token: localStorage.getItem('token') || '',
     header: {
       "headers":
@@ -19,14 +19,17 @@ export default new Vuex.Store({
   },
   // Update token in local storage
   mutations: {
-    setCurrentUser(currentState, token) {
+    setToken(currentState, token) {
       localStorage.setItem('token', token);
+    },
+    setCurrentUser(currentState, user) {
+      localStorage.setItem('user', user);
     }
   },
   actions: {
     login: (context, credentials) => {
       return Api.post("login", credentials, context.state.header).then((token) => {
-        context.commit('setCurrentUser', token.jwt);
+        context.commit('setToken', token.jwt);
         axios.defaults.headers.common.Authorization = `Bearer ${token.jwt}`;
       }).catch(error => {
         localStorage.removeItem('token');
@@ -36,11 +39,15 @@ export default new Vuex.Store({
 
     register: (context, credentials) => {
       return Api.post("users/", credentials, context.state.header).then((user) => {
+        // context.commit('setToken', user.jwt);
         console.log(user);
-        context.commit('setCurrentUser', user.jwt);
+        context.commit('setCurrentUser', user);
         axios.defaults.headers.common.Authorization = `Bearer ${user.jwt}`;
       }).catch(error => {
-        return Promise.reject(error);
+        if (error.data["code"] == 401) {
+          return Promise.reject("Session timeout.");
+        }
+        return Promise.reject(error.data);
       });
     },
 

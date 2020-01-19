@@ -12,7 +12,7 @@ export default {
     return axios
       .post(store.state.apiBaseUrl + url, data, headers)
       .then(response => Promise.resolve(response.data))
-      .catch(error => Promise.reject(error));
+      .catch(error => Promise.reject(error.response));
   },
 
 };

@@ -31,7 +31,7 @@ func CreateUser(c *gin.Context) {
 
 	if authUserAccessLevel != 1 {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "Sorry 🤔 but you can't create admin user",
+			"error": "Sorry 🤔 but only admins can create user",
 		})
 		return
 	}
@@ -43,7 +43,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	// Create user if no errors throws by Validate method in user model
+	// Create user if no errors thrown by Validate method in user model
 	if err := db.Create(&user); err.Error != nil {
 
 		// convert array of errors to JSON

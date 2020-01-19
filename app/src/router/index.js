@@ -20,7 +20,7 @@ const routes = [
     path: "/account",
     component: Admin,
     meta: {
-      requiresAuth: false,
+      requiresAuth: true,
     },
     children: [
       {
@@ -47,6 +47,11 @@ const routes = [
         path: "vote/list",
         name: "vote-list",
         component: VoteList,
+      },
+      {
+        path: "register",
+        name: "register",
+        component: Register
       }
     ]
   },
@@ -58,11 +63,6 @@ const routes = [
         path: "login",
         name: "login",
         component: Login
-      },
-      {
-        path: "register",
-        name: "register",
-        component: Register
       }
     ]
   },
@@ -90,7 +90,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth) && !auth.loggedIn) {
+  if (to.matched.some(record => record.meta.requiresAuth) && auth.loggedIn == '') {
     next({ path: '/auth/login' });
   } else {
     if (to.path == '/') {
