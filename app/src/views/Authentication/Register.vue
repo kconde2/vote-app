@@ -166,7 +166,7 @@ export default {
     handleSubmit: function(data) {
       this.$v.form.$touch();
       if (this.$v.form.$error) return;
-      console.log(data.access_level);
+
       // format date into correct format
       data.birth_date = moment(data.birth_date).format("DD-MM-YYYY");
 
@@ -191,7 +191,7 @@ export default {
       last_name: { required },
       birth_date: { required },
       email: { required, email },
-      pass: { required, minLength: minLength(1) },
+      pass: { required, minLength: minLength(6) },
       passwordConfirm: { required, sameAsPassword: sameAs("pass") }
     }
   }

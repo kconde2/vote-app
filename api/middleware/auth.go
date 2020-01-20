@@ -88,6 +88,7 @@ func authenticator(c *gin.Context) (interface{}, error) {
 		Email:       user.Email,
 		AccessLevel: user.AccessLevel,
 		UUID:        user.UUID,
+		FirstName: user.FirstName,
 	}, nil
 }
 
@@ -95,6 +96,7 @@ func authenticator(c *gin.Context) (interface{}, error) {
 func LoginResponse(c *gin.Context, code int, token string, expire time.Time) {
 	c.JSON(http.StatusOK, gin.H{
 		"jwt": token,
+		"time": expire,
 	})
 }
 
@@ -106,6 +108,7 @@ func payloadFunc(data interface{}) jwt.MapClaims {
 		return jwt.MapClaims{
 			"uuid":         v.UUID,
 			"access_level": v.AccessLevel,
+			"first_name": v.FirstName,
 		}
 	}
 

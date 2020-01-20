@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import Api from "./api";
+import jwt_decode from 'jwt-decode';
 
 Vue.use(Vuex);
 
@@ -31,6 +32,7 @@ export default new Vuex.Store({
       return Api.post("login", credentials, context.state.header).then((token) => {
         context.commit('setToken', token.jwt);
         axios.defaults.headers.common.Authorization = `Bearer ${token.jwt}`;
+        context.commit('setCurrentUser', jwt_decode(token.jwt));
       }).catch(error => {
         localStorage.removeItem('token');
         return Promise.reject(error);
@@ -38,8 +40,8 @@ export default new Vuex.Store({
     },
 
     register: (context, credentials) => {
-      return Api.post("users/", credentials, context.state.header).then((user) => {
-        context.commit('setCurrentUser', user);
+      return Api.post("users/", credentials, context.state.header).then(() => {
+        return Promise.resolve();
       }).catch(error => {
         if (error.data["code"] == 401)
           return Promise.reject({ "errors": { "message": "Session timeout, please log in again" } });

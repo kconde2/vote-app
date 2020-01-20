@@ -34,6 +34,7 @@
                   <th>Lastname</th>
                   <th class="text-center">Birthdate</th>
                   <th class="text-center">Delete</th>
+                  <th class="text-center">Edit</th>
                 </tr>
                 <tr v-bind:key="user.uuid" v-for="user in users">
                   <td>{{ user.first_name }}</td>
@@ -41,6 +42,9 @@
                   <td class="text-center">{{ user.birth_date }}</td>
                   <td class="text-center">
                     <button class="btn btn-danger" v-on:click="deleteUser(user.uuid)">Delete</button>
+                  </td>
+                  <td class="text-center">
+                    <router-link :to="{ name: 'edit-user'}" class="btn btn-secondary">Edit</router-link>
                   </td>
                 </tr>
               </table>

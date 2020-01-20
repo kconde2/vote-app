@@ -16,9 +16,7 @@
         </button>
         <div class="collapse navbar-collapse" id="menu-collapse">
           <ul class="navbar-nav mr-auto">
-            <!-- TODO: Edit middleware in bakend so that loginResponse returns full user infos -->
-            <!-- <li class="nav-item" v-if="user.access_level == 1"> -->
-            <li class="nav-item">
+            <li class="nav-item" v-if="user.access_level == 1">
               <router-link :to="{ name: 'user-list'}" class="nav-link">Utilisateurs</router-link>
             </li>
 
