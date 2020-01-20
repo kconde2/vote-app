@@ -23,7 +23,7 @@ export default new Vuex.Store({
       localStorage.setItem('token', token);
     },
     setCurrentUser(currentState, user) {
-      localStorage.setItem('user', user);
+      localStorage.setItem('user', JSON.stringify(user));
     }
   },
   actions: {
@@ -39,14 +39,10 @@ export default new Vuex.Store({
 
     register: (context, credentials) => {
       return Api.post("users/", credentials, context.state.header).then((user) => {
-        // context.commit('setToken', user.jwt);
-        console.log(user);
         context.commit('setCurrentUser', user);
-        axios.defaults.headers.common.Authorization = `Bearer ${user.jwt}`;
       }).catch(error => {
-        if (error.data["code"] == 401) {
-          return Promise.reject("Session timeout.");
-        }
+        if (error.data["code"] == 401)
+          return Promise.reject({ "errors": { "message": "Session timeout, please log in again" } });
         return Promise.reject(error.data);
       });
     },
@@ -57,6 +53,18 @@ export default new Vuex.Store({
 
       return Api.get("users/", context.state.header).then((users) => {
         return Promise.resolve(users);
+      }).catch(error => { return Promise.reject(error); });
+    },
+
+    deleteUser: (context, uuid) => {
+      return Api.delete("users/" + uuid, context.state.header).then((user) => {
+        return Promise.resolve(user);
+      }).catch(error => { return Promise.reject(error); });
+    },
+
+    updateUser: (context, uuid) => {
+      return Api.put("users/" + uuid, context.state.header).then((user) => {
+        return Promise.resolve(user);
       }).catch(error => { return Promise.reject(error); });
     },
 

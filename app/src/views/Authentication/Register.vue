@@ -62,6 +62,14 @@
               class="invalid-feedback"
             >Votre date de naissance est obligatoire</div>
           </div>
+          <div class="form-group">
+            <label for="access_level">Type d'utilisateur</label>
+            <Field type="select" name="access_level" class="form-control">
+              <option>Selectionnez</option>
+              <option value="0">Votant</option>
+              <option value="1">Administrateur</option>
+            </Field>
+          </div>
 
           <div class="form-group">
             <label for="email">Email</label>
@@ -119,7 +127,7 @@
 
           <template v-slot:submit-button>
             <button type="submit" class="btn btn-primary">S'inscrire</button>
-            <router-link to="login" class="alert-link ml-2">Se connecter</router-link>
+            <router-link :to="{ name: 'login'}" class="alert-link ml-2">Se connecter</router-link>
           </template>
         </Formik>
       </div>
@@ -147,7 +155,7 @@ export default {
       email: "",
       pass: "",
       passwordConfirm: "",
-      access_level: "0"
+      access_level: ""
     },
     errors: {
       status: false,
@@ -158,7 +166,7 @@ export default {
     handleSubmit: function(data) {
       this.$v.form.$touch();
       if (this.$v.form.$error) return;
-
+      console.log(data.access_level);
       // format date into correct format
       data.birth_date = moment(data.birth_date).format("DD-MM-YYYY");
 

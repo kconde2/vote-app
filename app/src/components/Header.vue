@@ -16,6 +16,8 @@
         </button>
         <div class="collapse navbar-collapse" id="menu-collapse">
           <ul class="navbar-nav mr-auto">
+            <!-- TODO: Edit middleware in bakend so that loginResponse returns full user infos -->
+            <!-- <li class="nav-item" v-if="user.access_level == 1"> -->
             <li class="nav-item">
               <router-link :to="{ name: 'user-list'}" class="nav-link">Utilisateurs</router-link>
             </li>
@@ -39,7 +41,7 @@
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-            >Hi user</a>
+            >Hi {{ user.first_name }}</a>
             <div class="dropdown-menu" aria-labelledby="user-account">
               <a class="dropdown-item" href="#">Mon compte</a>
               <a class="dropdown-item" href="#" @click="logout">Se déconnecter</a>
@@ -55,7 +57,9 @@
 import store from "../store/index";
 
 export default {
-  data: () => ({}),
+  data: () => ({
+    user: {}
+  }),
   methods: {
     logout: function() {
       // Call Vuex action
@@ -71,7 +75,13 @@ export default {
           // handle errors
           this.error = true;
         });
+    },
+    getUser: function() {
+      this.user = JSON.parse(localStorage.getItem("user")) || {};
     }
+  },
+  beforeMount() {
+    this.getUser();
   }
 };
 </script>

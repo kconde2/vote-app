@@ -14,5 +14,16 @@ export default {
       .then(response => Promise.resolve(response.data))
       .catch(error => Promise.reject(error.response));
   },
-
+  put(url, data, headers) {
+    return axios
+      .delete(store.state.apiBaseUrl + url, data, headers)
+      .then(response => Promise.resolve(response.data))
+      .catch(error => Promise.reject(error.response));
+  },
+  delete(url, data, headers) {
+    return axios
+      .delete(store.state.apiBaseUrl + url, data, headers)
+      .then(response => Promise.resolve(response.data))
+      .catch(error => Promise.reject(error.response));
+  },
 };
