@@ -9,8 +9,10 @@ import PageNotFound from "../views/PageNotFound.vue";
 import Dashboard from "../views/Account/Dashboard.vue";
 import UserList from "../views/Account/UserList.vue";
 import TopicList from "../views/Account/TopicList.vue";
+import TopicEdit from "../views/Account/TopicEdit.vue";
 import VoteList from "../views/Account/VoteList.vue";
 import UserEdit from "../views/Account/UserEdit.vue";
+import VoteEdit from "../views/Account/VoteEdit.vue";
 import auth from "../utils/auth";
 
 Vue.use(VueRouter);
@@ -20,33 +22,43 @@ const routes = [
     path: "/account",
     component: Admin,
     meta: {
-      requiresAuth: true,
+      requiresAuth: true
     },
     children: [
       {
         path: "dashboard",
         name: "dashboard",
-        component: Dashboard,
+        component: Dashboard
       },
       {
         path: "user/list",
         name: "user-list",
-        component: UserList,
+        component: UserList
       },
       {
         path: "user/edit",
         name: "edit-user",
-        component: UserEdit,
+        component: UserEdit
       },
       {
         path: "topic/list",
         name: "topic-list",
-        component: TopicList,
+        component: TopicList
+      },
+      {
+        path: "topic/edit",
+        name: "topic-edit",
+        component: TopicEdit
       },
       {
         path: "vote/list",
         name: "vote-list",
-        component: VoteList,
+        component: VoteList
+      },
+      {
+        path: "vote/edit/:uuid",
+        name: "vote-edit",
+        component: VoteEdit
       },
       {
         path: "register",
@@ -59,7 +71,7 @@ const routes = [
     path: "/auth",
     component: Auth,
     meta: {
-      requiresAuth: false,
+      requiresAuth: false
     },
     children: [
       {
@@ -93,11 +105,14 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth) && auth.loggedIn == '') {
-    next({ path: '/auth/login' });
+  if (
+    to.matched.some(record => record.meta.requiresAuth) &&
+    auth.loggedIn == ""
+  ) {
+    next({ path: "/auth/login" });
   } else {
-    if (to.path == '/') {
-      next({ path: '/account/dashboard' });
+    if (to.path == "/") {
+      next({ path: "/account/dashboard" });
     } else {
       next();
     }
