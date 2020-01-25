@@ -41,13 +41,14 @@ type UserResponse struct {
 	LastName    string    `json:"last_name"`
 	Email       string    `json:"email"`
 	DateOfBirth string    `json:"birth_date"`
+	AccessLevel int    		`json:"access_level"`
 }
 
 // Validate checks that user struct is valid
 func (user User) Validate(db *gorm.DB) {
 	// check if user is adult
 	if age := utils.Age(user.DateOfBirth); age < 18 {
-		db.AddError(errors.New("user: age need to be 18+"))
+		db.AddError(errors.New("Age needs to be 18+"))
 	}
 }
 

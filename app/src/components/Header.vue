@@ -1,6 +1,5 @@
 <template>
   <fragment>
-
     <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
       <div class="container">
         <router-link :to="{ name: 'dashboard'}" class="navbar-brand">VoteApp</router-link>
@@ -17,7 +16,7 @@
         </button>
         <div class="collapse navbar-collapse" id="menu-collapse">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
+            <li class="nav-item" v-if="user.access_level == 1">
               <router-link :to="{ name: 'user-list'}" class="nav-link">Utilisateurs</router-link>
             </li>
 
@@ -40,10 +39,10 @@
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-            >Bonjour Kaba</a>
+            >Hi {{ user.first_name }}</a>
             <div class="dropdown-menu" aria-labelledby="user-account">
               <a class="dropdown-item" href="#">Mon compte</a>
-              <a class="dropdown-item" href="#">Se déconnecter</a>
+              <a class="dropdown-item" href="#" @click="logout">Se déconnecter</a>
             </div>
           </li>
         </ul>
@@ -53,7 +52,36 @@
 </template>
 
 <script>
-export default {};
+import store from "../store/index";
+
+export default {
+  data: () => ({
+    user: {}
+  }),
+  methods: {
+    logout: function() {
+      // Call Vuex action
+      store
+        .dispatch("logout")
+        .then(() => {
+          // redirect to dashboard
+          this.$router.push({
+            name: "login"
+          });
+        })
+        .catch(() => {
+          // handle errors
+          this.error = true;
+        });
+    },
+    getUser: function() {
+      this.user = JSON.parse(localStorage.getItem("user")) || {};
+    }
+  },
+  beforeMount() {
+    this.getUser();
+  }
+};
 </script>
 
 <style lang="scss" scoped>

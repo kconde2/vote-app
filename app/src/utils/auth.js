@@ -1,5 +1,5 @@
 export default {
-  loggedIn: false,
+  loggedIn: localStorage.getItem('token') || '',
   login: function () { this.loggedIn = true },
   logout: function () { this.loggedIn = false }
 };

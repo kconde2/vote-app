@@ -10,7 +10,7 @@ import Dashboard from "../views/Account/Dashboard.vue";
 import UserList from "../views/Account/UserList.vue";
 import TopicList from "../views/Account/TopicList.vue";
 import VoteList from "../views/Account/VoteList.vue";
-import UserAdd from "../views/Account/UserAdd.vue";
+import UserEdit from "../views/Account/UserEdit.vue";
 import auth from "../utils/auth";
 
 Vue.use(VueRouter);
@@ -20,7 +20,7 @@ const routes = [
     path: "/account",
     component: Admin,
     meta: {
-      requiresAuth: false,
+      requiresAuth: true,
     },
     children: [
       {
@@ -34,9 +34,9 @@ const routes = [
         component: UserList,
       },
       {
-        path: "user/add",
-        name: "user-add",
-        component: UserAdd,
+        path: "user/edit",
+        name: "edit-user",
+        component: UserEdit,
       },
       {
         path: "topic/list",
@@ -47,22 +47,25 @@ const routes = [
         path: "vote/list",
         name: "vote-list",
         component: VoteList,
+      },
+      {
+        path: "register",
+        name: "register",
+        component: Register
       }
     ]
   },
   {
     path: "/auth",
     component: Auth,
+    meta: {
+      requiresAuth: false,
+    },
     children: [
       {
         path: "login",
         name: "login",
         component: Login
-      },
-      {
-        path: "register",
-        name: "register",
-        component: Register
       }
     ]
   },
@@ -90,7 +93,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth) && !auth.loggedIn) {
+  if (to.matched.some(record => record.meta.requiresAuth) && auth.loggedIn == '') {
     next({ path: '/auth/login' });
   } else {
     if (to.path == '/') {

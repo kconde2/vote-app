@@ -4,7 +4,8 @@ import Vuelidate from "vuelidate";
 import router from "./router";
 import store from "./store";
 import jQuery from 'jquery';
-import { Plugin } from 'vue-fragment'
+import { Plugin } from 'vue-fragment';
+import axios from "axios";
 
 window.$ = window.jQuery = jQuery;
 
@@ -19,6 +20,16 @@ Vue.config.productionTip = false;
 
 Vue.use(Plugin);
 Vue.use(Vuelidate);
+
+Vue.prototype.$http = axios;
+const token = localStorage.getItem('token');
+
+if (token !== '' && token !== 'undefined') {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+}
+else {
+  localStorage.setItem('token', '');
+}
 
 new Vue({
   router,

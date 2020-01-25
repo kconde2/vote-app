@@ -7,6 +7,7 @@
       :initial-values="form"
       class="auth-wrapper__form"
     >
+      <div v-if="error" class="is-invalid">Invalid Credentials</div>
       <div class="form-group">
         <label for="email">Email</label>
         <Field
@@ -40,7 +41,7 @@
 
       <template v-slot:submit-button>
         <button type="submit" class="btn btn-primary">Se connecter</button>
-        <router-link to="register" class="alert-link ml-2">S'inscrire</router-link>
+        <router-link :to="{ name: 'register'}" class="alert-link ml-2">S'inscrire</router-link>
       </template>
     </Formik>
   </div>
@@ -50,6 +51,7 @@
 import Field from "../../components/Form/Field.vue";
 import Formik from "../../components/Form/Formik.vue";
 import { required, email } from "vuelidate/lib/validators";
+import store from "../../store/index";
 
 export default {
   components: {
@@ -60,14 +62,26 @@ export default {
     form: {
       email: "",
       password: ""
-    }
+    },
+    error: false
   }),
   methods: {
     handleSubmit: function(data) {
       this.$v.form.$touch();
       if (this.$v.form.$error) return;
-      // to form submit after this
-      alert("Send login request to API submitted", JSON.stringify(data));
+      // API call
+      store
+        .dispatch("login", JSON.stringify(data))
+        .then(() => {
+          // redirect to dashboard
+          this.$router.push({
+            name: "dashboard"
+          });
+        })
+        .catch(() => {
+          // handle errors
+          this.error = true;
+        });
     }
   },
   validations: {
@@ -78,3 +92,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.is-invalid {
+  color: red;
+}
+</style>

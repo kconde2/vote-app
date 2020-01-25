@@ -31,7 +31,7 @@ func CreateUser(c *gin.Context) {
 
 	if authUserAccessLevel != 1 {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "Sorry 🤔 but you can't created admin user",
+			"error": "Sorry 🤔 but only admins can create user",
 		})
 		return
 	}
@@ -43,7 +43,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	// Create user if no errors throws by Validate method in user model
+	// Create user if no errors thrown by Validate method in user model
 	if err := db.Create(&user); err.Error != nil {
 
 		// convert array of errors to JSON
@@ -148,18 +148,18 @@ func DeleteUser(c *gin.Context) {
 		if authUserAccessLevel != 1 {
 			if authUserUUID != uuid {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-					"error": "Sorry but you can't Delete, ONLY admin user can",
+					"error": "Sorry but you can't delete user, ONLY admins can",
 				})
 				return
 			}
-
 		}
 		// DELETE FROM users WHERE uuid= user.uuid
 		// exemple : UPDATE users SET deleted_at=date.now WHERE uuid = user.uuid;
 		db.Where("uuid = ?", uuid).Delete(&user)
 
 		// Display JSON result
-		c.JSON(200, gin.H{"success": "User #" + uuid + " deleted"})
+		// c.JSON(200, gin.H{"success": "User #" + uuid + " deleted"})
+		c.JSON(200, gin.H{"success": "User successfully deleted"})
 	} else {
 		// Display JSON error
 		c.JSON(404, gin.H{"error": "User not found"})
