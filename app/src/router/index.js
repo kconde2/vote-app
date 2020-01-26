@@ -93,7 +93,16 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth) && auth.loggedIn == '') {
+
+  // redirect to dashboard if access to auth page when user is logged in
+  if (to.matched.some(record => !record.meta.requiresAuth) && auth.isLoggedIn()) {
+    if (to.path !== '/account/dashboard') {
+      next({ path: '/account/dashboard' });
+    }
+  }
+
+  // force login if not
+  if (to.matched.some(record => record.meta.requiresAuth) && !auth.isLoggedIn()) {
     next({ path: '/auth/login' });
   } else {
     if (to.path == '/') {

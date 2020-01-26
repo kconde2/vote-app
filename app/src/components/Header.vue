@@ -17,11 +17,11 @@
         <div class="collapse navbar-collapse" id="menu-collapse">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item" v-if="user.access_level == 1">
-              <router-link :to="{ name: 'user-list'}" class="nav-link">Utilisateurs</router-link>
+              <router-link :to="{ name: 'user-list'}" class="nav-link">Users</router-link>
             </li>
 
             <li class="nav-item">
-              <router-link :to="{ name: 'topic-list'}" class="nav-link">Sujets</router-link>
+              <router-link :to="{ name: 'topic-list'}" class="nav-link">Topics</router-link>
             </li>
 
             <li class="nav-item">
@@ -41,8 +41,8 @@
               aria-expanded="false"
             >Hi {{ user.first_name }}</a>
             <div class="dropdown-menu" aria-labelledby="user-account">
-              <a class="dropdown-item" href="#">Mon compte</a>
-              <a class="dropdown-item" href="#" @click="logout">Se déconnecter</a>
+              <a class="dropdown-item" href="#">Account</a>
+              <a class="dropdown-item" href="#" @click="logout">Logout</a>
             </div>
           </li>
         </ul>

@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-12 d-flex mb-2">
         <div class="d-flex align-items-center">
-          <h1 class="h3">Liste des utilisateurs</h1>
+          <h1 class="h3">List of users</h1>
         </div>
 
         <div class="ml-auto d-flex align-items-center">
@@ -11,7 +11,7 @@
             :to="{ name: 'register'}"
             href="#"
             class="btn btn-primary"
-          >Ajouter un utilisateur</router-link>
+          >Add user</router-link>
         </div>
       </div>
     </div>
@@ -19,7 +19,7 @@
       <div class="col-12">
         <div class="card border-0">
           <div class="card-body">
-            <h5 class="card-title">List of users</h5>
+            <h5 class="card-title"></h5>
             <div v-if="message.status" class="alert alert-success fade show" role="alert">
               <strong>{{ message.content }}</strong>
               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -32,6 +32,7 @@
                 <tr>
                   <th>Firstname</th>
                   <th>Lastname</th>
+                  <th>Email</th>
                   <th class="text-center">Birthdate</th>
                   <th class="text-center">Delete</th>
                   <th class="text-center">Edit</th>
@@ -39,6 +40,7 @@
                 <tr v-bind:key="user.uuid" v-for="user in users">
                   <td>{{ user.first_name }}</td>
                   <td>{{ user.last_name }}</td>
+                  <td>{{ user.email }}</td>
                   <td class="text-center">{{ user.birth_date }}</td>
                   <td class="text-center">
                     <button class="btn btn-danger" v-on:click="deleteUser(user.uuid)">Delete</button>
