@@ -2,8 +2,10 @@ import store from '../store/index';
 import axios from "axios";
 
 axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`;
+
 export default {
   get(url) {
+    console.log(store.state.apiBaseUrl + url);
     return axios
       .get(store.state.apiBaseUrl + url)
       .then(response => Promise.resolve(response.data))

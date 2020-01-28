@@ -1,40 +1,34 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-8 mx-auto">
+      <div class="col-12 mx-auto">
         <div class="card border-0">
           <div class="card-header">Let's Vote !</div>
-          <div class="card card-body">
-            <div class="card-header">{{ votes.title }}</div>
-            <div class="card-body">{{ votes.desc }}</div>
-          </div>
-          <div class="card-footer">
-            <button
-              style="padding:2% 40% 2% 40%; margin-left:5%"
-              type="submit"
-              v-on:click="UpdateVote()"
-              class="btn btn-primary"
-            >
-              JE VOTE
-            </button>
+          <div class="card-body">
+            <div>
+              <strong>Title</strong>
+            </div>
+            <div>{{ votes.title }}</div>
+            <div>
+              <strong>Descrpition</strong>
+            </div>
+            <div>{{ votes.desc }}</div>
+            <hr />
+            <div class="mt-4">
+              <button type="submit" v-on:click="updateVote()" class="btn btn-primary">Je vote</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="row" v-if="user.access_level == 1">
-      <div class="col-8 mx-auto">
+    <div class="row mt-4" v-if="user.access_level == 1">
+      <div class="col-12 mx-auto">
         <div class="card border-0">
-          <div class="card-header">
-            Liste of voting users : {{ votes.uuid_votes.length }} votes
-          </div>
-          <div class="card card-body">
+          <div class="card-header">Liste of voting users : {{ votes.uuid_votes.length }} votes</div>
+          <div class="card-body">
             <p v-if="!votes.uuid_votes.length">No votes found</p>
-            <table
-              v-if="votes.uuid_votes.length"
-              style="width:100%"
-              class="table table-bordered"
-            >
+            <table v-if="votes.uuid_votes.length" style="width:100%" class="table table-bordered">
               <thead>
                 <tr>
                   <th>User UUID</th>
@@ -72,36 +66,34 @@ export default {
 
   mounted() {
     this.uuid = this.$route.params.uuid; // id of the sujet
-    this.getTopic(this.uuid);
-    this.user = this.getUser();
+    this.getTopic();
+    this.getUser();
   },
   methods: {
-    getTopic: function(uuid) {
+    getTopic: function() {
       store
-        .dispatch("getVotes", uuid)
+        .dispatch("getVotes", this.uuid)
         .then(votes => {
-          console.log(votes);
           this.votes = votes;
         })
         .catch(() => {});
     },
-
     getUser: function() {
-      this.user = JSON.parse(localStorage.getItem("user")) || {};
-      console.log("USER INFO : ", this.user.uuid);
-      store.dispatch(user => {
-        this.users = user;
-        console.log("votes", user, this.user);
-      });
+      let uuid = JSON.parse(localStorage.getItem("user")).uuid;
+      store
+        .dispatch("getUserInfo", uuid)
+        .then(user => {
+          this.user = user;
+        })
+        .catch(() => {});
     },
-
-    UpdateVote: function() {
+    updateVote: function() {
       this.votes.uuid_votes = "";
       store
         .dispatch("updateTopic", this.votes)
         .then(() => {
           this.$router.push({
-            name: "dashboard"
+            name: "topic-list"
           });
         })
         .catch(error => {

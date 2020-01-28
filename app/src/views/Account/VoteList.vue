@@ -49,7 +49,6 @@ export default {
         .dispatch("getTopic")
         .then(topics => {
           this.topics = topics;
-          console.log("topics", this.topics);
         })
         .catch(() => {});
     },
@@ -59,14 +58,12 @@ export default {
         .dispatch("getVotes", uuid)
         .then(vote => {
           this.votes = vote;
-          console.log("votes", this.votes);
         })
         .catch(() => {});
     },
 
     getUser: function() {
       this.user = JSON.parse(localStorage.getItem("user")) || {};
-      console.log("USER INFO : ", this.user.uuid);
     }
   }
 };

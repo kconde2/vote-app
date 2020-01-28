@@ -14,13 +14,13 @@ export default {
   },
   runLoginDurationCheck: function () {
     let expiresDate = localStorage.getItem('expiresDate');
-    //let expiresDate = "2020-01-28T10:03:36.4006803+01:00";
+    // let expiresDate = "2020-01-28T10:03:36.4006803+01:00";
     let expiresTimestamp = (new Date(expiresDate)).getTime();
 
     this.loggedExpireID = setInterval(() => {
       let now = Date.now();
-      let diff = expiresTimestamp - now;
-      console.log(diff)
+      // let diff = expiresTimestamp - now;
+      // console.log(diff)
       if (now >= expiresTimestamp) {
         if (auth.isLoggedIn()) {
           store
@@ -36,7 +36,6 @@ export default {
               console.log(error);
             });
         } else {
-          console.log(this.loggedExpireID);
           clearInterval(this.loggedExpireID);
           this.loggedExpireID = null;
         }

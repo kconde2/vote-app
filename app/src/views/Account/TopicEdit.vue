@@ -3,11 +3,11 @@
     <div class="row">
       <div class="col-12">
         <div class="card border-0">
-          <div class="card-body">TOPIC EDIT</div>
+          <div class="card-body">Edit topic #{{ topic.uuid }}</div>
           <Formik
             @on-submit="handleSubmit"
             submit-label="Valider"
-            :initial-values="votes"
+            :initial-values="form"
             class="auth-wrapper__form"
           >
             <div v-if="errors.status" class="is-invalid">
@@ -28,9 +28,7 @@
               <div
                 v-if="$v.$anyDirty && !$v.form.title.required"
                 class="invalid-feedback"
-              >
-                Votre titre est obligatoire
-              </div>
+              >Votre titre est obligatoire</div>
             </div>
 
             <div class="form-group">
@@ -46,9 +44,7 @@
               <div
                 v-if="$v.$anyDirty && !$v.form.desc.required"
                 class="invalid-feedback"
-              >
-                Une description est obligatoire est obligatoire
-              </div>
+              >Une description est obligatoire est obligatoire</div>
             </div>
 
             <template v-slot:submit-button>
@@ -73,13 +69,16 @@ export default {
     Field
   },
   data: () => ({
-    votes: {
+    form: {
+      title: "",
+      desc: "",
+    },
+    topic: {
       title: "",
       desc: "",
       uuid: "",
       uuid_votes: ""
     },
-
     errors: {
       status: false,
       message: ""
@@ -88,36 +87,59 @@ export default {
 
   mounted() {
     this.uuid = this.$route.params.uuid;
-    this.getTopic(this.uuid);
+    if (this.uuid) {
+      this.getTopic(this.uuid);
+    }
   },
   methods: {
     getTopic: function(uuid) {
       store
         .dispatch("getVotes", uuid)
         .then(topic => {
-          //  console.log("rhfrjgnrkjgkr", topic);
-          this.votes.uuid = topic.uuid;
-          this.votes.uuid_votes = topic.uuid_votes;
+          this.form.title = topic.title;
+          this.form.desc = topic.desc;
+
+          this.topic = topic;
         })
         .catch(() => {});
     },
 
     handleSubmit: function(data) {
-      // console.log("dataaaa", JSON.stringify(data));
-      data.uuid_votes = "";
+      this.topic.uuid_votes = "";
       // API call
-      store
-        .dispatch("updateTopic", data)
-        .then(() => {
-          // redirect to TopicList
-          this.$router.push({
-            name: "topic-list"
+
+      if (this.uuid) {
+        this.topic.title = this.form.title;
+        this.topic.desc = this.form.desc;
+
+        // update an existing topic
+        store
+          .dispatch("updateTopic", this.topic)
+          .then(() => {
+            // redirect to TopicList
+            this.$router.push({
+              name: "topic-list"
+            });
+          })
+          .catch(error => {
+            // handle errors
+            this.errors = { status: true, message: error.errors };
           });
-        })
-        .catch(error => {
-          // handle errors
-          this.errors = { status: true, message: error.errors };
-        });
+      } else {
+        // create new topic
+        store
+          .dispatch("addTopic", data)
+          .then(() => {
+            // redirect to TopicList
+            this.$router.push({
+              name: "topic-list"
+            });
+          })
+          .catch(error => {
+            // handle errors
+            this.errors = { status: true, message: error.errors };
+          });
+      }
     }
   },
   validations: {

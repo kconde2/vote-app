@@ -57,16 +57,17 @@ export default new Vuex.Store({
           return Promise.reject(error.data);
         });
     },
-    getUsers: () => { // context
+    getUsers: () => {
       return Api.get("users/").then((users) => {
         return Promise.resolve(users);
       }).catch(error => {
-        console.log(error.response.headers); return Promise.reject(error);
+        return Promise.reject(error);
       });
     },
     getUserInfo: (context, uuid) => {
-      if (!uuid)
+      if (!uuid) {
         return Promise.reject("No user found.");
+      }
 
       return Api.get("users/" + uuid).then((user) => {
         return Promise.resolve(user);
@@ -89,10 +90,9 @@ export default new Vuex.Store({
       delete axios.defaults.headers.common['Authorization'];
       Promise.resolve();
     },
-    editTopic: (context, credentials) => {
+    addTopic: (context, credentials) => {
       return Api.post("votes/", credentials, context.state.header)
         .then(() => {
-          console.log(Promise);
           return Promise.resolve();
         })
         .catch(error => {
@@ -117,7 +117,6 @@ export default new Vuex.Store({
     getVotes: (context, uuid) => {
       return Api.get("votes/" + uuid, context.state.header)
         .then(votes => {
-          //  console.log("votes", uuid, " avant uid", votes);
           return Promise.resolve(votes);
         })
         .catch(error => {
@@ -125,9 +124,8 @@ export default new Vuex.Store({
         });
     },
 
-    updateTopic: (context, data) => {
-      console.log(data);
-      return Api.put("votes/" + data.uuid, data, context.state.header)
+    updateTopic: (context, topic) => {
+      return Api.put("votes/" + topic.uuid, topic)
         .then(votes => {
           return Promise.resolve(votes);
         })
@@ -145,6 +143,6 @@ export default new Vuex.Store({
           return Promise.reject(error);
         });
     },
-    modules: {},
+    //modules: {},
   }
 });
