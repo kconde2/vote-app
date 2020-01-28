@@ -73,6 +73,15 @@ export default new Vuex.Store({
         return Promise.resolve(user);
       }).catch(error => { return Promise.reject(error); });
     },
+    getUserVotes: (context, uuid) => {
+      if (!uuid) {
+        return Promise.reject("No user found.");
+      }
+
+      return Api.get(`users/${uuid}/votes`).then((user) => {
+        return Promise.resolve(user);
+      }).catch(error => { return Promise.reject(error); });
+    },
     deleteUser: (context, uuid) => {
       return Api.delete("users/" + uuid).then((user) => {
         return Promise.resolve(user);
@@ -118,6 +127,16 @@ export default new Vuex.Store({
       return Api.get("votes/" + uuid, context.state.header)
         .then(votes => {
           return Promise.resolve(votes);
+        })
+        .catch(error => {
+          return Promise.reject(error);
+        });
+    },
+
+    getTopicUsers: (context, uuid) => {
+      return Api.get(`votes/${uuid}/users`)
+        .then(result => {
+          return Promise.resolve(result);
         })
         .catch(error => {
           return Promise.reject(error);

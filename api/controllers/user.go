@@ -8,6 +8,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,13 +34,37 @@ func GetUserInfo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"uuid":         user.UUID,
-		"first_name":   user.FirstName,
-		"last_name":    user.LastName,
-		"email":        user.Email,
-		"birth_date":   user.DateOfBirth,
-		"access_level": user.AccessLevel,
+	c.JSON(200, user)
+}
+
+// GetUserVotes user information by uuid
+func GetUserVotes(c *gin.Context) {
+	uuid := c.Param("uuid")
+	var user models.User
+	var votes []models.Vote
+
+	// check if vote exists throw an not found error if not
+	db := db.GetDB()
+	if err := db.Where("uuid = ?", uuid).First(&user).Error; err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	// // Find vote and associated voter
+	// db.Model(&vote).Association("UUIDVote").Find(&user.UUIDVote)
+
+	// // Get only all uuid from voter list
+	// voteUUIDs := []string{}
+	// for _, v := range user.UUIDVote {
+	// 	voteUUIDs = append(voteUUIDs, v.UUID.String())
+	// }
+
+	db.Model(&user).Related(&votes, "Votes")
+	fmt.Println(votes)
+	// return json data
+	c.JSON(http.StatusOK, gin.H{
+		"user":  user,
+		"votes": votes,
 	})
 }
 
@@ -133,13 +158,9 @@ func UpdateUser(c *gin.Context) {
 			user.AccessLevel = newUser.AccessLevel
 		}
 
-		/*if !newUser.DateOfBirth.IsZero() {
-			dateOfBirth, err := time.Parse("02-01-2006", newUser.DateOfBirth)
-			if err != nil {
-				return err
-			}
-			user.DateOfBirth = dateOfBirth
-		}*/
+		if !newUser.DateOfBirth.IsZero() {
+			user.DateOfBirth = newUser.DateOfBirth
+		}
 
 		// Update multiple attributes with `struct`, will only update those changed
 

@@ -40,14 +40,14 @@
                     <td v-if="user.access_level == 1">
                       <router-link
                         :to="{ name: 'topic-edit', params: { uuid: vote.uuid } }"
-                        class="btn btn-secondary"
+                        class="btn btn-secondary w-100"
                       >Edit</router-link>
                     </td>
 
                     <td>
                       <router-link
                         :to="{ name: 'vote-edit', params: { uuid: vote.uuid } }"
-                        class="btn btn-secondary"
+                        class="btn btn-info w-100"
                       >Details</router-link>
                     </td>
                   </tr>

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-8 mx-auto">
-        <div class="card border-0">
+        <div class="card border-0" v-if="!unauthorized">
           <div class="card-body">
             Edit user #{{ form.uuid }}
             <Formik
@@ -16,6 +16,7 @@
                 class="alert alert-success"
                 role="alert"
               >{{ validation.message }}</div>
+
               <div v-if="errors.status" class="is-invalid">
                 <ul v-bind:key="key" v-for="(item, key) in errors.message">
                   <li>{{ item }}</li>
@@ -105,10 +106,13 @@
               </div>
 
               <template v-slot:submit-button>
-                <button type="submit" class="btn btn-success">Update</button>
+                <button type="submit" class="btn btn-success w-100 mt-2">Update</button>
               </template>
             </Formik>
           </div>
+        </div>
+        <div v-else-if="unauthorized" class="is-invalid">
+          Aucun utilisateur trouvé
         </div>
       </div>
     </div>
@@ -141,6 +145,7 @@ export default {
       status: false,
       message: ""
     },
+    unauthorized: false,
     validation: {
       success: false,
       message: "Informations modifiée avec succès"
@@ -192,7 +197,16 @@ export default {
           this.form.birth_date = moment(user.birth_date).format("YYYY-MM-DD");
           this.form.email = user.email;
         })
-        .catch(() => {});
+        .catch(error => {
+          if (error.response.data.error == "record not found") {
+            this.errors = {
+              status: true,
+              message: [error.response.data.error]
+            };
+
+            this.unauthorized = true;
+          }
+        });
     }
   },
   validations: {

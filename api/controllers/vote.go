@@ -96,6 +96,42 @@ func RetrieveVote(c *gin.Context) {
 	})
 }
 
+// GetVoteUsers get all user for specific vote
+func GetVoteUsers(c *gin.Context) {
+	uuid := c.Param("uuid")
+	var vote models.Vote
+	var users []models.User
+
+	// check if vote exists throw an not found error if not
+	db := db.GetDB()
+	if err := db.Where("uuid = ?", uuid).First(&vote).Error; err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	// Find vote and associated voter
+	db.Model(&vote).Association("UUIDVote").Find(&vote.UUIDVote)
+
+	// Get only all uuid from voter list
+	voteUUIDs := []string{}
+	for _, v := range vote.UUIDVote {
+		voteUUIDs = append(voteUUIDs, v.UUID.String())
+	}
+
+	db.Model(&vote).Related(&users, "UUIDVote")
+
+	// return json data
+	c.JSON(http.StatusOK, gin.H{
+		"vote": gin.H{
+			"uuid":       vote.UUID,
+			"title":      vote.Title,
+			"desc":       vote.Description,
+			"uuid_votes": voteUUIDs,
+		},
+		"users": users,
+	})
+}
+
 // UpdateVote update specific vote
 func UpdateVote(c *gin.Context) {
 	uuid := c.Param("uuid")

@@ -42,6 +42,7 @@ func setupRouter() *gin.Engine {
 		{
 			users.GET("/", controllers.GetUsers)
 			users.GET("/:uuid", controllers.GetUserInfo)
+			users.GET("/:uuid/votes", controllers.GetUserVotes)
 			users.POST("/", controllers.CreateUser)
 			users.PUT("/:uuid", controllers.UpdateUser)
 			users.DELETE("/:uuid", controllers.DeleteUser)
@@ -53,6 +54,7 @@ func setupRouter() *gin.Engine {
 			votes.GET("/", controllers.GetVotes)
 			votes.POST("/", controllers.CreateVote)
 			votes.GET("/:uuid", controllers.RetrieveVote)
+			votes.GET("/:uuid/users", controllers.GetVoteUsers)
 			votes.PUT("/:uuid", controllers.UpdateVote)
 
 		}

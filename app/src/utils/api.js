@@ -5,7 +5,6 @@ axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('to
 
 export default {
   get(url) {
-    console.log(store.state.apiBaseUrl + url);
     return axios
       .get(store.state.apiBaseUrl + url)
       .then(response => Promise.resolve(response.data))

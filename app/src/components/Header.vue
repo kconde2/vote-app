@@ -41,7 +41,7 @@
               aria-expanded="false"
             >Hi {{ user.first_name }}</a>
             <div class="dropdown-menu" aria-labelledby="user-account">
-              <a class="dropdown-item" href="#">Account</a>
+              <router-link :to="{ name: 'edit-user', params: { uuid: user.uuid }}" class="dropdown-item">Account</router-link>
               <a class="dropdown-item" href="#" @click="logout">Logout</a>
             </div>
           </li>

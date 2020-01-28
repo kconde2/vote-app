@@ -32,8 +32,8 @@
                   <th>Email</th>
                   <th class="text-center">Birthdate</th>
                   <th class="text-center">Rôle</th>
-                  <th class="text-center">Delete</th>
                   <th class="text-center">Edit</th>
+                  <th class="text-center">Delete</th>
                 </tr>
                 <tr v-bind:key="user.uuid" v-for="user in users">
                   <td>{{ user.first_name }}</td>
@@ -41,14 +41,15 @@
                   <td>{{ user.email }}</td>
                   <td class="text-center">{{ user.birth_date }}</td>
                   <td class="text-center">{{ getRole(user.access_level) }}</td>
-                  <td class="text-center">
-                    <button class="btn btn-danger" v-on:click="deleteUser(user.uuid)">Delete</button>
-                  </td>
+
                   <td class="text-center">
                     <router-link
-                      class="btn btn-secondary"
+                      class="btn btn-secondary w-100"
                       :to="{ name: 'edit-user', params: { uuid: user.uuid }}"
                     >Edit</router-link>
+                  </td>
+                  <td class="text-center">
+                    <button class="btn btn-danger w-100" v-on:click="deleteUser(user.uuid)">Delete</button>
                   </td>
                 </tr>
               </table>
