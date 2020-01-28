@@ -5,46 +5,47 @@
         <div class="card border-0">
           <div class="card-header">Let's Vote !</div>
           <div class="card card-body">
-            <div class="card-header">{{votes.title}}</div>
-            <div class="card-body">{{votes.desc}}</div>
+            <div class="card-header">{{ votes.title }}</div>
+            <div class="card-body">{{ votes.desc }}</div>
           </div>
           <div class="card-footer">
-            <Formik submit-label="Valider" :initial-values="votes" class="auth-wrapper__form">
-              <div
-                class="form-group"
-                style="background: white; color: black; padding: 1em; border-radius: 5px;"
-              >
-                <label for="uuid_votes">
-                  <Field type="radio" name="uuid_votes" value="OUI" @change="upvote()" />OUI
-                </label>
-                <span style="padding-left: 60%;">
-                  <i class="fas fa-thumbs-up"></i>
-                  ({{ votes.uuid_votes.length }})
-                </span>
-              </div>
-              <hr />
-              <div
-                class="form-group"
-                style="background: white; color: black; padding: 1em; border-radius: 5px;"
-              >
-                <label for="uuid_votes">
-                  <Field type="radio" name="uuid_votes" value="NON" @change="upvote()" />NON
-                </label>
-                <span style="padding-left: 60%;">
-                  <i class="fas fa-thumbs-up"></i>
-                  ({{ counter }})
-                </span>
-              </div>
+            <button
+              style="padding:2% 40% 2% 40%; margin-left:5%"
+              type="submit"
+              v-on:click="UpdateVote()"
+              class="btn btn-primary"
+            >
+              JE VOTE
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-              <template v-slot:submit-button>
-                <button
-                  style="padding:2% 40% 2% 40%; margin-left:5%"
-                  type="submit"
-                  class="btn btn-primary"
-                  v-on:click="updatePoll()"
-                >JE VOTE</button>
-              </template>
-            </Formik>
+    <div class="row" v-if="user.access_level == 1">
+      <div class="col-8 mx-auto">
+        <div class="card border-0">
+          <div class="card-header">
+            Liste of voting users : {{ votes.uuid_votes.length }} votes
+          </div>
+          <div class="card card-body">
+            <p v-if="!votes.uuid_votes.length">No votes found</p>
+            <table
+              v-if="votes.uuid_votes.length"
+              style="width:100%"
+              class="table table-bordered"
+            >
+              <thead>
+                <tr>
+                  <th>User UUID</th>
+                </tr>
+              </thead>
+              <tbody id="v-for-object">
+                <tr v-for="vote in votes.uuid_votes" :key="vote.id">
+                  <td>{{ vote }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -52,24 +53,17 @@
   </div>
 </template>
 
-
 <script>
 import store from "../../store/index";
-import Field from "../../components/Form/Field.vue";
-import Formik from "../../components/Form/Formik.vue";
 
 export default {
-  components: {
-    Formik,
-    Field
-  },
   data: () => ({
     votes: {
-      uuid_votes: []
+      title: "",
+      uuid_votes: [],
+      desc: ""
     },
-    counter: 0,
     user: {},
-    click: [],
     message: {
       status: false,
       content: ""
@@ -79,6 +73,7 @@ export default {
   mounted() {
     this.uuid = this.$route.params.uuid; // id of the sujet
     this.getTopic(this.uuid);
+    this.user = this.getUser();
   },
   methods: {
     getTopic: function(uuid) {
@@ -93,40 +88,29 @@ export default {
 
     getUser: function() {
       this.user = JSON.parse(localStorage.getItem("user")) || {};
-    },
-    // a revoir
-    upvote: function() {
-      if (this.click == true) {
-        this.counter -= 1;
-        this.votes.uuid_votes += this.user.uuid;
-      } else {
-        this.votes.uuid_votes += this.user.uuid;
-        this.click = true;
-      }
-    },
-    downvote: function() {
-      if (this.click == true) {
-        this.votes.uuid_votes -= 1;
-        this.counter += 1;
-      } else {
-        this.votes.uuid_votes += this.user.uuid;
-        this.click = true;
-      }
+      console.log("USER INFO : ", this.user.uuid);
+      store.dispatch(user => {
+        this.users = user;
+        console.log("votes", user, this.user);
+      });
     },
 
-    updatePoll: function() {
-      (this.votes.uuid_votes += this.user.uuid),
-        store
-          .dispatch("updateVote", JSON.stringify(this.votes))
-          .then(votes => {
-            console.log(votes);
-            this.votes = votes;
-          })
-          .catch(() => {});
+    UpdateVote: function() {
+      this.votes.uuid_votes = "";
+      store
+        .dispatch("updateTopic", this.votes)
+        .then(() => {
+          this.$router.push({
+            name: "dashboard"
+          });
+        })
+        .catch(error => {
+          // handle errors
+          this.errors = { status: true, message: error.errors };
+        });
     }
   }
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

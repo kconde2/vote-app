@@ -107,17 +107,6 @@ export default new Vuex.Store({
     getTopic: context => {
       return Api.get("votes/", context.state.header)
         .then(votes => {
-          console.log("hello", votes);
-          return Promise.resolve(votes);
-        })
-        .catch(error => {
-          return Promise.reject(error);
-        });
-    },
-    getVotes: (context, uuid) => {
-      return Api.get("votes/" + uuid, context.state.header)
-        .then(votes => {
-          console.log("votes", uuid, " avant uid", votes);
           return Promise.resolve(votes);
         })
         .catch(error => {
@@ -125,10 +114,22 @@ export default new Vuex.Store({
         });
     },
 
-    updateTopic: (context, uuid) => {
-      return Api.put("votes/" + uuid, context.state.header)
-        .then(vote => {
-          return Promise.resolve(vote);
+    getVotes: (context, uuid) => {
+      return Api.get("votes/" + uuid, context.state.header)
+        .then(votes => {
+          //  console.log("votes", uuid, " avant uid", votes);
+          return Promise.resolve(votes);
+        })
+        .catch(error => {
+          return Promise.reject(error);
+        });
+    },
+
+    updateTopic: (context, data) => {
+      console.log(data);
+      return Api.put("votes/" + data.uuid, data, context.state.header)
+        .then(votes => {
+          return Promise.resolve(votes);
         })
         .catch(error => {
           return Promise.reject(error);

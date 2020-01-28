@@ -45,6 +45,7 @@ func setupRouter() *gin.Engine {
 			users.POST("/", controllers.CreateUser)
 			users.PUT("/:uuid", controllers.UpdateUser)
 			users.DELETE("/:uuid", controllers.DeleteUser)
+
 		}
 
 		votes := route.Group("/votes")
@@ -53,6 +54,7 @@ func setupRouter() *gin.Engine {
 			votes.POST("/", controllers.CreateVote)
 			votes.GET("/:uuid", controllers.RetrieveVote)
 			votes.PUT("/:uuid", controllers.UpdateVote)
+
 		}
 	}
 	return r

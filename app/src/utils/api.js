@@ -26,5 +26,5 @@ export default {
       .delete(store.state.apiBaseUrl + url)
       .then(response => Promise.resolve(response.data))
       .catch(error => Promise.reject(error.response));
-  },
+  }
 };
