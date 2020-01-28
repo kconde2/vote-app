@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
-import Api from "./api";
+import Api from "./../utils/api";
 import jwt_decode from 'jwt-decode';
 
 Vue.use(Vuex);
@@ -34,18 +34,17 @@ export default new Vuex.Store({
   },
   actions: {
     login: (context, credentials) => {
-      return Api.post("login", credentials, context.state.header).then((token) => {
+      return Api.post("login", JSON.parse(credentials), context.state.header).then((token) => {
         context.commit('setToken', token.jwt);
         context.commit('setExpireTime', token.time);
         axios.defaults.headers.common.Authorization = `Bearer ${token.jwt}`;
         context.commit('setCurrentUser', jwt_decode(token.jwt));
-       return Promise.resolve();
+        return Promise.resolve();
       }).catch(error => {
         localStorage.removeItem('token');
         return Promise.reject(error);
       });
     },
-
     register: (context, credentials) => {
       return Api.post("users/", credentials, context.state.header).then(() => {
         return Promise.resolve();
@@ -55,28 +54,31 @@ export default new Vuex.Store({
         return Promise.reject(error.data);
       });
     },
-
-    getUsers: (context) => {
-      if (!context.state.token)
-        return Promise.reject("No users found.");
-
-      return Api.get("users/", context.state.header).then((users) => {
+    getUsers: () => { // context
+      return Api.get("users/").then((users) => {
         return Promise.resolve(users);
+      }).catch(error => {
+        console.log(error.response.headers); return Promise.reject(error);
+      });
+    },
+    getUserInfo: (context, uuid) => {
+      if (!uuid)
+        return Promise.reject("No user found.");
+
+      return Api.get("users/" + uuid).then((user) => {
+        return Promise.resolve(user);
       }).catch(error => { return Promise.reject(error); });
     },
-
     deleteUser: (context, uuid) => {
-      return Api.delete("users/" + uuid, context.state.header).then((user) => {
+      return Api.delete("users/" + uuid).then((user) => {
         return Promise.resolve(user);
       }).catch(error => { return Promise.reject(error); });
     },
-
-    updateUser: (context, uuid) => {
-      return Api.put("users/" + uuid, context.state.header).then((user) => {
+    updateUser: (context, data) => {
+      return Api.put("users/" + data.uuid, data).then((user) => {
         return Promise.resolve(user);
       }).catch(error => { return Promise.reject(error); });
     },
-
     logout: () => {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

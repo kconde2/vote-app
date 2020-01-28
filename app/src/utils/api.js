@@ -1,28 +1,29 @@
-import store from './index';
+import store from '../store/index';
 import axios from "axios";
 
+axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`;
 export default {
-  get(url, headers) {
+  get(url) {
     return axios
-      .get(store.state.apiBaseUrl + url, headers)
+      .get(store.state.apiBaseUrl + url)
       .then(response => Promise.resolve(response.data))
       .catch(error => Promise.reject(error));
   },
-  post(url, data, headers) {
+  post(url, data) {
     return axios
-      .post(store.state.apiBaseUrl + url, data, headers)
+      .post(store.state.apiBaseUrl + url, data)
       .then(response => Promise.resolve(response.data))
       .catch(error => Promise.reject(error.response));
   },
-  put(url, data, headers) {
+  put(url, data) {
     return axios
-      .delete(store.state.apiBaseUrl + url, data, headers)
+      .put(store.state.apiBaseUrl + url, data)
       .then(response => Promise.resolve(response.data))
       .catch(error => Promise.reject(error.response));
   },
-  delete(url, data, headers) {
+  delete(url) {
     return axios
-      .delete(store.state.apiBaseUrl + url, data, headers)
+      .delete(store.state.apiBaseUrl + url)
       .then(response => Promise.resolve(response.data))
       .catch(error => Promise.reject(error.response));
   },

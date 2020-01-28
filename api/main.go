@@ -1,8 +1,8 @@
 package main
 
 import (
-	"log"
 	"fmt"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kconde2/vote-app/api/controllers"
@@ -17,7 +17,7 @@ func main() {
 	db.CreateSystemAdmin()
 
 	r := setupRouter()
-	
+
 	r.Run(":8080")
 }
 
@@ -41,6 +41,7 @@ func setupRouter() *gin.Engine {
 		users := route.Group("/users")
 		{
 			users.GET("/", controllers.GetUsers)
+			users.GET("/:uuid", controllers.GetUserInfo)
 			users.POST("/", controllers.CreateUser)
 			users.PUT("/:uuid", controllers.UpdateUser)
 			users.DELETE("/:uuid", controllers.DeleteUser)
@@ -57,6 +58,7 @@ func setupRouter() *gin.Engine {
 	return r
 }
 
+// CORSMiddleware rules for Cross Domain
 func CORSMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")

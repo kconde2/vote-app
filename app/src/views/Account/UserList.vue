@@ -7,14 +7,11 @@
         </div>
 
         <div class="ml-auto d-flex align-items-center">
-          <router-link
-            :to="{ name: 'register'}"
-            href="#"
-            class="btn btn-primary"
-          >Add user</router-link>
+          <router-link :to="{ name: 'register'}" href="#" class="btn btn-primary">Add user</router-link>
         </div>
       </div>
     </div>
+
     <div class="row">
       <div class="col-12">
         <div class="card border-0">
@@ -34,6 +31,7 @@
                   <th>Lastname</th>
                   <th>Email</th>
                   <th class="text-center">Birthdate</th>
+                  <th class="text-center">Rôle</th>
                   <th class="text-center">Delete</th>
                   <th class="text-center">Edit</th>
                 </tr>
@@ -42,11 +40,15 @@
                   <td>{{ user.last_name }}</td>
                   <td>{{ user.email }}</td>
                   <td class="text-center">{{ user.birth_date }}</td>
+                  <td class="text-center">{{ getRole(user.access_level) }}</td>
                   <td class="text-center">
                     <button class="btn btn-danger" v-on:click="deleteUser(user.uuid)">Delete</button>
                   </td>
                   <td class="text-center">
-                    <router-link :to="{ name: 'edit-user'}" class="btn btn-secondary">Edit</router-link>
+                    <router-link
+                      class="btn btn-secondary"
+                      :to="{ name: 'edit-user', params: { uuid: user.uuid }}"
+                    >Edit</router-link>
                   </td>
                 </tr>
               </table>
@@ -85,6 +87,9 @@ export default {
           result.success
             ? (this.message = { status: true, content: result.success })
             : (this.message = { status: true, content: result.error });
+
+          // delete user from users list
+          this.users = this.users.filter(user => user.uuid !== uuid);
         })
         .catch(() => {});
     },
@@ -97,6 +102,15 @@ export default {
             : (this.message = { status: true, content: result.error });
         })
         .catch(() => {});
+    },
+    getRole: function(accessLevel) {
+      if (accessLevel == 1) {
+        return "Administrateur";
+      } else if (accessLevel == 0) {
+        return "Votant";
+      } else {
+        return "Unknown";
+      }
     }
   },
   beforeMount() {

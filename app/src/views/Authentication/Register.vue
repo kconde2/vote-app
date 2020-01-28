@@ -64,11 +64,21 @@
           </div>
           <div class="form-group">
             <label for="access_level">Type d'utilisateur</label>
-            <Field type="select" name="access_level" class="form-control">
+            <Field
+              type="select"
+              name="access_level"
+              class="form-control"
+              v-model.trim="$v.form.access_level.$model"
+            >
               <option>Selectionnez</option>
               <option value="0">Votant</option>
               <option value="1">Administrateur</option>
             </Field>
+
+            <div
+              v-if="$v.$anyDirty && !$v.form.access_level.required"
+              class="invalid-feedback"
+            >Le niveau d'accès est obligatoire</div>
           </div>
 
           <div class="form-group">
@@ -191,6 +201,7 @@ export default {
       last_name: { required },
       birth_date: { required },
       email: { required, email },
+      access_level: { required },
       pass: { required, minLength: minLength(6) },
       passwordConfirm: { required, sameAsPassword: sameAs("pass") }
     }

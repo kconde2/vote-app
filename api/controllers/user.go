@@ -19,6 +19,30 @@ func GetUsers(c *gin.Context) {
 	c.JSON(200, users)
 }
 
+// GetUserInfo user information by uuid
+func GetUserInfo(c *gin.Context) {
+	var user models.User
+	uuid := c.Params.ByName("uuid")
+	db := db.GetDB()
+
+	if err := db.Where("uuid = ?", uuid).First(&user).Error; err != nil {
+		// error handling...
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"uuid":         user.UUID,
+		"first_name":   user.FirstName,
+		"last_name":    user.LastName,
+		"email":        user.Email,
+		"birth_date":   user.DateOfBirth,
+		"access_level": user.AccessLevel,
+	})
+}
+
 // CreateUser create new user and save it into database
 func CreateUser(c *gin.Context) {
 	var user models.User
@@ -98,16 +122,24 @@ func UpdateUser(c *gin.Context) {
 		}
 
 		if newUser.LastName != "" {
-			user.FirstName = newUser.LastName
+			user.LastName = newUser.LastName
 		}
 
 		if newUser.Email != "" {
 			user.Email = newUser.Email
 		}
 
-		if newUser.Email != "" {
-			user.Email = newUser.Email
+		if newUser.AccessLevel == 0 || newUser.AccessLevel == 1 {
+			user.AccessLevel = newUser.AccessLevel
 		}
+
+		/*if !newUser.DateOfBirth.IsZero() {
+			dateOfBirth, err := time.Parse("02-01-2006", newUser.DateOfBirth)
+			if err != nil {
+				return err
+			}
+			user.DateOfBirth = dateOfBirth
+		}*/
 
 		// Update multiple attributes with `struct`, will only update those changed
 
@@ -155,7 +187,13 @@ func DeleteUser(c *gin.Context) {
 		}
 		// DELETE FROM users WHERE uuid= user.uuid
 		// exemple : UPDATE users SET deleted_at=date.now WHERE uuid = user.uuid;
-		db.Where("uuid = ?", uuid).Delete(&user)
+		if err := db.Where("uuid = ?", uuid).Delete(&user).Error; err != nil {
+			// error handling...
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
 
 		// Display JSON result
 		// c.JSON(200, gin.H{"success": "User #" + uuid + " deleted"})

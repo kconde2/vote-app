@@ -4,18 +4,24 @@
       <div class="col-8 mx-auto">
         <div class="card border-0">
           <div class="card-body">
-            Edit user
+            Edit user #{{ form.uuid }}
             <Formik
               @on-submit="handleSubmit"
               submit-label="Valider"
               :initial-values="form"
               class="auth-wrapper__form"
             >
+              <div
+                v-if="validation.success"
+                class="alert alert-success"
+                role="alert"
+              >{{ validation.message }}</div>
               <div v-if="errors.status" class="is-invalid">
                 <ul v-bind:key="key" v-for="(item, key) in errors.message">
                   <li>{{ item }}</li>
                 </ul>
               </div>
+
               <div class="form-group">
                 <label for="first_name">Prénom</label>
                 <Field
@@ -47,6 +53,7 @@
                   class="invalid-feedback"
                 >Votre nom de famille est obligatoire</div>
               </div>
+
               <div class="form-group">
                 <label for="birth_date">Date de naissance</label>
                 <Field
@@ -62,13 +69,23 @@
                   class="invalid-feedback"
                 >Votre date de naissance est obligatoire</div>
               </div>
+
               <div class="form-group">
                 <label for="access_level">Type d'utilisateur</label>
-                <Field type="select" name="access_level" class="form-control">
+                <Field
+                  type="select"
+                  name="access_level"
+                  class="form-control"
+                  v-model.trim="$v.form.access_level.$model"
+                >
                   <option>Selectionnez</option>
                   <option value="0">Votant</option>
                   <option value="1">Administrateur</option>
                 </Field>
+                <div
+                  v-if="$v.$anyDirty && !$v.form.access_level.required"
+                  class="invalid-feedback"
+                >Le niveau d'accès est obligatoire</div>
               </div>
 
               <div class="form-group">
@@ -87,46 +104,8 @@
                 </div>
               </div>
 
-              <div class="form-group">
-                <label for="pass">Mot de passe</label>
-                <Field
-                  type="password"
-                  name="pass"
-                  class="form-control"
-                  placeholder="Entrez votre mot de passe"
-                  :class="{ 'is-invalid': $v.$anyDirty && $v.form.pass.$error }"
-                  v-model.trim="$v.form.pass.$model"
-                />
-                <div v-if="$v.$anyDirty && $v.form.pass.$error" class="invalid-feedback">
-                  <span v-if="!$v.form.pass.required">Le mot de passe est obligatoire</span>
-                  <span
-                    v-if="!$v.form.pass.minLength"
-                  >Le mot de passe doit faire au minimum 8 caractères</span>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="passwordConfirm">Mot de passe de confirmation</label>
-                <Field
-                  type="password"
-                  name="passwordConfirm"
-                  class="form-control"
-                  placeholder="Entrez votre mot de passe à nouveau"
-                  :class="{ 'is-invalid': $v.$anyDirty && $v.form.passwordConfirm.$error }"
-                  v-model.trim="$v.form.passwordConfirm.$model"
-                />
-                <div v-if="$v.$anyDirty && $v.form.passwordConfirm.$error" class="invalid-feedback">
-                  <span
-                    v-if="!$v.form.passwordConfirm.required"
-                  >Le mot de passe de confirmation est obligatoire</span>
-                  <span
-                    v-else-if="!$v.form.passwordConfirm.sameAsPassword"
-                  >Les deux mots de passe ne correspondent pas</span>
-                </div>
-              </div>
-
               <template v-slot:submit-button>
-                <button type="submit" class="btn btn-success">Edit</button>
+                <button type="submit" class="btn btn-success">Update</button>
               </template>
             </Formik>
           </div>
@@ -139,7 +118,7 @@
 <script>
 import Field from "../../components/Form/Field.vue";
 import Formik from "../../components/Form/Formik.vue";
-import { email, minLength, sameAs } from "vuelidate/lib/validators";
+import { email, minLength, required, between } from "vuelidate/lib/validators";
 import store from "../../store/index";
 import moment from "moment";
 
@@ -149,20 +128,34 @@ export default {
     Field
   },
   data: () => ({
+    user: {},
     form: {
+      uuid: "",
       first_name: "",
       last_name: "",
       birth_date: "",
-      email: "",
-      pass: "",
-      passwordConfirm: "",
-      access_level: ""
+      access_level: "",
+      email: ""
     },
     errors: {
       status: false,
       message: ""
+    },
+    validation: {
+      success: false,
+      message: "Informations modifiée avec succès"
     }
   }),
+  beforeMount() {
+    this.getUserInfo();
+    this.form = {
+      first_name: this.user.first_name,
+      last_name: this.user.last_name,
+      birth_date: this.user.birth_date,
+      access_level: this.user.access_level,
+      email: this.user.email
+    };
+  },
   methods: {
     handleSubmit: function(data) {
       this.$v.form.$touch();
@@ -173,27 +166,42 @@ export default {
 
       // API call
       store
-        .dispatch("editUser", JSON.stringify(data))
+        .dispatch("updateUser", data)
         .then(() => {
-          // redirect to dashboard
-          this.$router.push({
-            name: "dashboard"
-          });
+          this.validation.success = true;
+          setTimeout(() => {
+            this.$router.push({
+              name: "user-list"
+            });
+          }, 3000);
         })
         .catch(error => {
           // handle errors
           this.errors = { status: true, message: error.errors };
         });
+    },
+    getUserInfo: function() {
+      moment.suppressDeprecationWarnings = true;
+      store
+        .dispatch("getUserInfo", this.$route.params.uuid)
+        .then(user => {
+          this.form.uuid = user.uuid;
+          this.form.first_name = user.first_name;
+          this.form.last_name = user.last_name;
+          this.form.access_level = user.access_level.toString();
+          this.form.birth_date = moment(user.birth_date).format("YYYY-MM-DD");
+          this.form.email = user.email;
+        })
+        .catch(() => {});
     }
   },
   validations: {
     form: {
-      first_name: {},
-      last_name: {},
-      birth_date: {},
+      first_name: { required, minLength: minLength(3) },
+      last_name: { required, minLength: minLength(3) },
+      birth_date: { required },
       email: { email },
-      pass: { minLength: minLength(1) },
-      passwordConfirm: { sameAsPassword: sameAs("pass") }
+      access_level: { between: between(0, 1) }
     }
   }
 };

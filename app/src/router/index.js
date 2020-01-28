@@ -34,7 +34,7 @@ const routes = [
         component: UserList,
       },
       {
-        path: "user/edit",
+        path: "user/edit/:uuid",
         name: "edit-user",
         component: UserEdit,
       },
@@ -94,12 +94,13 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
 
-  // redirect to dashboard if access to auth page when user is logged in
-  if (to.matched.some(record => !record.meta.requiresAuth) && auth.isLoggedIn()) {
-    if (to.path !== '/account/dashboard') {
-      next({ path: '/account/dashboard' });
-    }
-  }
+  // // redirect to dashboard if access to auth page when user is logged in
+  // if (!to.matched[0].meta.requiresAuth && auth.isLoggedIn()) {
+  //   console.log("object", to);
+  //   if (to.path !== '/account/dashboard') {
+  //     next({ path: '/account/dashboard' });
+  //   }
+  // }
 
   // force login if not
   if (to.matched.some(record => record.meta.requiresAuth) && !auth.isLoggedIn()) {

@@ -41,7 +41,7 @@ type UserResponse struct {
 	LastName    string    `json:"last_name"`
 	Email       string    `json:"email"`
 	DateOfBirth string    `json:"birth_date"`
-	AccessLevel int    		`json:"access_level"`
+	AccessLevel int       `json:"access_level"`
 }
 
 // Validate checks that user struct is valid
@@ -97,6 +97,7 @@ func (user User) MarshalJSON() ([]byte, error) {
 	ur.FirstName = user.FirstName
 	ur.LastName = user.LastName
 	ur.Email = user.Email
+	ur.AccessLevel = user.AccessLevel
 	ur.DateOfBirth = dateOfBirth
 	return json.Marshal(ur)
 }
