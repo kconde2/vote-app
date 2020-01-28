@@ -8,7 +8,6 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -60,7 +59,7 @@ func GetUserVotes(c *gin.Context) {
 	// }
 
 	db.Model(&user).Related(&votes, "Votes")
-	fmt.Println(votes)
+
 	// return json data
 	c.JSON(http.StatusOK, gin.H{
 		"user":  user,
