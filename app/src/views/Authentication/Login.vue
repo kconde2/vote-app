@@ -41,7 +41,6 @@
 
       <template v-slot:submit-button>
         <button type="submit" class="btn btn-primary">Se connecter</button>
-        <router-link :to="{ name: 'register'}" class="alert-link ml-2">S'inscrire</router-link>
       </template>
     </Formik>
   </div>

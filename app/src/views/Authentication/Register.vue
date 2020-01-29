@@ -137,7 +137,6 @@
 
           <template v-slot:submit-button>
             <button type="submit" class="btn btn-primary">S'inscrire</button>
-            <router-link :to="{ name: 'login'}" class="alert-link ml-2">Se connecter</router-link>
           </template>
         </Formik>
       </div>
@@ -186,7 +185,7 @@ export default {
         .then(() => {
           // redirect to dashboard
           this.$router.push({
-            name: "dashboard"
+            name: "user-list"
           });
         })
         .catch(error => {

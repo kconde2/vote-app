@@ -3,11 +3,11 @@
     <div class="row">
       <div class="col-12 d-flex mb-2">
         <div class="d-flex align-items-center">
-          <h1 class="h3">Sujets</h1>
+          <h1 class="h3">Topics</h1>
         </div>
 
         <div class="ml-auto d-flex align-items-center" v-if="user.access_level == 1">
-          <router-link :to="{ name: 'topic-edit'}" class="btn btn-primary">Ajouter un sujet</router-link>
+          <router-link :to="{ name: 'topic-edit'}" class="btn btn-primary">Add topic</router-link>
         </div>
       </div>
     </div>
