@@ -10,7 +10,10 @@
           <div class="card-body">
             <h5 class="card-title">Discover the latest topics here</h5>
             <p class="card-text">We are filling up the application as often as possible</p>
-            <a href="#" class="btn btn-primary">Check it out</a>
+            <router-link
+              :to="{ name: 'topic-list' }"
+              class="btn btn-primary"
+            >Check it out</router-link>
           </div>
         </div>
       </div>

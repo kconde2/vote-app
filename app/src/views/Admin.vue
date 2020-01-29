@@ -1,7 +1,9 @@
 <template>
   <fragment>
     <Header></Header>
-    <router-view></router-view>
+    <div class="container main">
+      <router-view></router-view>
+    </div>
     <Footer></Footer>
   </fragment>
 </template>
@@ -19,4 +21,7 @@ export default {
 </script>
 
 <style>
+.main {
+  min-height: calc(100vh - 165px);
+}
 </style>

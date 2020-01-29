@@ -24,10 +24,9 @@ run: go-logs
 set-up:
 	go get -u ./...
 
-install: 
-	set-up finstall build
+install: set-up finstall build
 
-f-install: 
+f-install:
 	docker-compose run node yarn install
 
 enter:

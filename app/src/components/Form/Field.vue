@@ -31,7 +31,13 @@
     :class="'field field-' + type"
   />
 
-  <select v-else-if="type == 'select'" :name="name" @input="updateFieldData" v-bind="$attrs">
+  <select
+    v-else-if="type == 'select'"
+    :name="name"
+    @input="updateFieldData"
+    v-bind="$attrs"
+    :value="value"
+  >
     <slot></slot>
   </select>
 
@@ -91,7 +97,7 @@ export default {
   },
   methods: {
     updateFieldData: function(event) {
-      this.$emit('input', event.target.value);
+      this.$emit("input", event.target.value);
       this.updateFields(this.type, this.name, event.target.value);
     }
   }

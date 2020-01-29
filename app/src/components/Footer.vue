@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <div class="va-footer fixed-bottom">
+    <div class="va-footer">
       <div class="container d-flex va-footer__wrapper">
         <div class="va-footer__logo">{{ new Date().getFullYear() }}</div>
 
@@ -22,5 +22,6 @@ export default {};
   box-shadow: 0 0 30px rgba(28, 39, 60, 0.08);
   border-bottom: 1px solid rgba(28, 39, 60, 0.12);
   padding: 20px 5px;
+  margin-top: 20px;
 }
 </style>

@@ -22,14 +22,6 @@ Vue.use(Plugin);
 Vue.use(Vuelidate);
 
 Vue.prototype.$http = axios;
-const token = localStorage.getItem('token');
-
-if (token !== '' && token !== 'undefined') {
-  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-}
-else {
-  localStorage.setItem('token', '');
-}
 
 new Vue({
   router,

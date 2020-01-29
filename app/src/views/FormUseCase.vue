@@ -69,7 +69,6 @@ export default {
   methods: {
     handleSubmit: function(data) {
       console.log("data => ", data);
-      // console.log("this => kaba", this.initialValues);
     }
   }
 };

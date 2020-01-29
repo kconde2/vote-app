@@ -52,6 +52,7 @@ import Field from "../../components/Form/Field.vue";
 import Formik from "../../components/Form/Formik.vue";
 import { required, email } from "vuelidate/lib/validators";
 import store from "../../store/index";
+import auth from "../../utils/auth";
 
 export default {
   components: {
@@ -69,10 +70,12 @@ export default {
     handleSubmit: function(data) {
       this.$v.form.$touch();
       if (this.$v.form.$error) return;
+
       // API call
       store
         .dispatch("login", JSON.stringify(data))
         .then(() => {
+          auth.runLoginDurationCheck();
           // redirect to dashboard
           this.$router.push({
             name: "dashboard"

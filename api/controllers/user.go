@@ -19,6 +19,54 @@ func GetUsers(c *gin.Context) {
 	c.JSON(200, users)
 }
 
+// GetUserInfo user information by uuid
+func GetUserInfo(c *gin.Context) {
+	var user models.User
+	uuid := c.Params.ByName("uuid")
+	db := db.GetDB()
+
+	if err := db.Where("uuid = ?", uuid).First(&user).Error; err != nil {
+		// error handling...
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, user)
+}
+
+// GetUserVotes user information by uuid
+func GetUserVotes(c *gin.Context) {
+	uuid := c.Param("uuid")
+	var user models.User
+	var votes []models.Vote
+
+	// check if vote exists throw an not found error if not
+	db := db.GetDB()
+	if err := db.Where("uuid = ?", uuid).First(&user).Error; err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	// // Find vote and associated voter
+	// db.Model(&vote).Association("UUIDVote").Find(&user.UUIDVote)
+
+	// // Get only all uuid from voter list
+	// voteUUIDs := []string{}
+	// for _, v := range user.UUIDVote {
+	// 	voteUUIDs = append(voteUUIDs, v.UUID.String())
+	// }
+
+	db.Model(&user).Related(&votes, "Votes")
+
+	// return json data
+	c.JSON(http.StatusOK, gin.H{
+		"user":  user,
+		"votes": votes,
+	})
+}
+
 // CreateUser create new user and save it into database
 func CreateUser(c *gin.Context) {
 	var user models.User
@@ -98,15 +146,19 @@ func UpdateUser(c *gin.Context) {
 		}
 
 		if newUser.LastName != "" {
-			user.FirstName = newUser.LastName
+			user.LastName = newUser.LastName
 		}
 
 		if newUser.Email != "" {
 			user.Email = newUser.Email
 		}
 
-		if newUser.Email != "" {
-			user.Email = newUser.Email
+		if newUser.AccessLevel == 0 || newUser.AccessLevel == 1 {
+			user.AccessLevel = newUser.AccessLevel
+		}
+
+		if !newUser.DateOfBirth.IsZero() {
+			user.DateOfBirth = newUser.DateOfBirth
 		}
 
 		// Update multiple attributes with `struct`, will only update those changed
@@ -155,7 +207,13 @@ func DeleteUser(c *gin.Context) {
 		}
 		// DELETE FROM users WHERE uuid= user.uuid
 		// exemple : UPDATE users SET deleted_at=date.now WHERE uuid = user.uuid;
-		db.Where("uuid = ?", uuid).Delete(&user)
+		if err := db.Where("uuid = ?", uuid).Delete(&user).Error; err != nil {
+			// error handling...
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
 
 		// Display JSON result
 		// c.JSON(200, gin.H{"success": "User #" + uuid + " deleted"})
