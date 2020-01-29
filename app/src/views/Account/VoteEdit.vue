@@ -108,6 +108,9 @@ export default {
     // vote for topic
     updateVote: function() {
       this.vote.uuid_votes = "";
+      this.vote.title = "";
+      this.vote.desc = "";
+
       store
         .dispatch("updateTopic", this.vote)
         .then(() => {

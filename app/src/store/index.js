@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import Api from "./../utils/api";
-import jwt_decode from 'jwt-decode';
+import jwt_decode from "jwt-decode";
 
 Vue.use(Vuex);
 
@@ -24,25 +24,27 @@ export default new Vuex.Store({
       localStorage.setItem("token", token);
     },
     setCurrentUser(currentState, user) {
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user));
     },
     setExpireTime(currentState, expireTime) {
-      currentState.expireTime = expireTime
-      localStorage.setItem('expiresDate', expireTime);
+      currentState.expireTime = expireTime;
+      localStorage.setItem("expiresDate", expireTime);
     }
   },
   actions: {
     login: (context, credentials) => {
-      return Api.post("login", JSON.parse(credentials), context.state.header).then((token) => {
-        context.commit('setToken', token.jwt);
-        context.commit('setExpireTime', token.time);
-        axios.defaults.headers.common.Authorization = `Bearer ${token.jwt}`;
-        context.commit('setCurrentUser', jwt_decode(token.jwt));
-        return Promise.resolve();
-      }).catch(error => {
-        localStorage.removeItem('token');
-        return Promise.reject(error);
-      });
+      return Api.post("login", JSON.parse(credentials), context.state.header)
+        .then(token => {
+          context.commit("setToken", token.jwt);
+          context.commit("setExpireTime", token.time);
+          axios.defaults.headers.common.Authorization = `Bearer ${token.jwt}`;
+          context.commit("setCurrentUser", jwt_decode(token.jwt));
+          return Promise.resolve();
+        })
+        .catch(error => {
+          localStorage.removeItem("token");
+          return Promise.reject(error);
+        });
     },
     register: (context, credentials) => {
       return Api.post("users/", credentials, context.state.header)
@@ -58,45 +60,63 @@ export default new Vuex.Store({
         });
     },
     getUsers: () => {
-      return Api.get("users/").then((users) => {
-        return Promise.resolve(users);
-      }).catch(error => {
-        return Promise.reject(error);
-      });
+      return Api.get("users/")
+        .then(users => {
+          return Promise.resolve(users);
+        })
+        .catch(error => {
+          return Promise.reject(error);
+        });
     },
     getUserInfo: (context, uuid) => {
       if (!uuid) {
         return Promise.reject("No user found.");
       }
 
-      return Api.get("users/" + uuid).then((user) => {
-        return Promise.resolve(user);
-      }).catch(error => { return Promise.reject(error); });
+      return Api.get("users/" + uuid)
+        .then(user => {
+          return Promise.resolve(user);
+        })
+        .catch(error => {
+          return Promise.reject(error);
+        });
     },
     getUserVotes: (context, uuid) => {
       if (!uuid) {
         return Promise.reject("No user found.");
       }
 
-      return Api.get(`users/${uuid}/votes`).then((user) => {
-        return Promise.resolve(user);
-      }).catch(error => { return Promise.reject(error); });
+      return Api.get(`users/${uuid}/votes`)
+        .then(user => {
+          return Promise.resolve(user);
+        })
+        .catch(error => {
+          return Promise.reject(error);
+        });
     },
     deleteUser: (context, uuid) => {
-      return Api.delete("users/" + uuid).then((user) => {
-        return Promise.resolve(user);
-      }).catch(error => { return Promise.reject(error); });
+      return Api.delete("users/" + uuid)
+        .then(user => {
+          return Promise.resolve(user);
+        })
+        .catch(error => {
+          return Promise.reject(error);
+        });
     },
     updateUser: (context, data) => {
-      return Api.put("users/" + data.uuid, data).then((user) => {
-        return Promise.resolve(user);
-      }).catch(error => { return Promise.reject(error); });
+      return Api.put("users/" + data.uuid, data)
+        .then(user => {
+          return Promise.resolve(user);
+        })
+        .catch(error => {
+          return Promise.reject(error);
+        });
     },
     logout: () => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('expiresDate');
-      delete axios.defaults.headers.common['Authorization'];
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("expiresDate");
+      delete axios.defaults.headers.common["Authorization"];
       Promise.resolve();
     },
     addTopic: (context, credentials) => {
@@ -153,15 +173,15 @@ export default new Vuex.Store({
         });
     },
 
-    updateVote: function (uuid, credentials, context) {
-      return Api.put("/votes/" + uuid, context.state.header, credentials)
+    updateVote: (context, vote) => {
+      return Api.put("/votes/" + vote.uuid, vote)
         .then(vote => {
           return Promise.resolve(vote);
         })
         .catch(error => {
           return Promise.reject(error);
         });
-    },
+    }
     //modules: {},
   }
 });

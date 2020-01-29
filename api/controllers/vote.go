@@ -159,6 +159,7 @@ func UpdateVote(c *gin.Context) {
 	authUserAccessLevel := jwtClaims["access_level"].(float64)
 
 	if authUserAccessLevel != 1 {
+
 		if vote.Title != "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": "Sorry but you can't update title field on vote",
