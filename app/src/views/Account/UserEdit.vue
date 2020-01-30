@@ -111,9 +111,7 @@
             </Formik>
           </div>
         </div>
-        <div v-else-if="unauthorized" class="is-invalid">
-          Aucun utilisateur trouvé
-        </div>
+        <div v-else-if="unauthorized" class="is-invalid">Aucun utilisateur trouvé</div>
       </div>
     </div>
   </div>
@@ -125,6 +123,7 @@ import Formik from "../../components/Form/Formik.vue";
 import { email, minLength, required, between } from "vuelidate/lib/validators";
 import store from "../../store/index";
 import moment from "moment";
+import helpers from "../../utils/helpers";
 
 export default {
   components: {
@@ -186,7 +185,6 @@ export default {
         });
     },
     getUserInfo: function() {
-      moment.suppressDeprecationWarnings = true;
       store
         .dispatch("getUserInfo", this.$route.params.uuid)
         .then(user => {
@@ -194,7 +192,7 @@ export default {
           this.form.first_name = user.first_name;
           this.form.last_name = user.last_name;
           this.form.access_level = user.access_level.toString();
-          this.form.birth_date = moment(user.birth_date).format("YYYY-MM-DD");
+          this.form.birth_date = helpers.formatDate(user.birth_date);
           this.form.email = user.email;
         })
         .catch(error => {

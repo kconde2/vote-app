@@ -5,6 +5,7 @@
         <div class="card border-0">
           <div class="card-header">My votes topics' list</div>
           <div class="card-body">
+            <p v-if="!votes.length">Empty votes list</p>
             <table v-if="votes.length" class="table table-bordered w-100">
               <tr>
                 <th>Title</th>

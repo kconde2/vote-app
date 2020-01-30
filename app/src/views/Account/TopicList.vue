@@ -35,7 +35,7 @@
                 </thead>
                 <tbody id="v-for-object">
                   <tr v-for="vote in votes" :key="vote.uuid">
-                    <td>{{ vote.title }}</td>
+                    <td style="width: 280px;">{{ vote.title }}</td>
                     <td>{{ vote.desc }}</td>
                     <td v-if="user.access_level == 1">
                       <router-link
